@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="text_on_settings">21dp</dimen>
+    <dimen name="main_tsize">22sp</dimen>
+    <dimen name="main_cornersize">10dp</dimen>
+    <dimen name="main_padonicon">10dp</dimen>
+    <dimen name="settings_tsize">16sp</dimen>
+</resources>
