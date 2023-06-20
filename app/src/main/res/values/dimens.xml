@@ -5,4 +5,6 @@
     <dimen name="main_cornersize">10dp</dimen>
     <dimen name="main_padonicon">10dp</dimen>
     <dimen name="settings_tsize">16sp</dimen>
+    <dimen name="settings_button">62dp</dimen>
+    <dimen name="padding_horizontal">16dp</dimen>
 </resources>

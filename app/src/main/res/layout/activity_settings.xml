@@ -14,7 +14,7 @@
         android:orientation="horizontal">
 
         <ImageView
-            android:id="@+id/back"
+            android:id="@+id/buttonBack"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/back"
@@ -35,7 +35,8 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="61dp">
+        android:layout_height="@dimen/settings_button"
+        android:paddingHorizontal="@dimen/padding_horizontal">
 
         <TextView
             android:layout_width="wrap_content"
@@ -44,7 +45,6 @@
             android:layout_gravity="start"
             android:textSize="@dimen/settings_tsize"
             android:textColor="@color/black"
-            android:paddingStart="16dp"
             android:paddingVertical="@dimen/text_on_settings"/>
 
         <Switch
@@ -52,12 +52,13 @@
             android:layout_height="wrap_content"
             android:layout_gravity="end"
             android:paddingVertical="@dimen/text_on_settings"
-            android:paddingEnd="18dp"/>
+            android:paddingEnd="2dp"/>
     </FrameLayout>
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="61dp">
+        android:layout_height="@dimen/settings_button"
+        android:paddingHorizontal="@dimen/padding_horizontal">
 
         <TextView
             android:layout_width="wrap_content"
@@ -65,8 +66,7 @@
             android:text="@string/share"
             android:textSize="@dimen/settings_tsize"
             android:textColor="@color/black"
-            android:paddingVertical="@dimen/text_on_settings"
-            android:paddingStart="16dp"/>
+            android:paddingVertical="@dimen/text_on_settings"/>
 
         <ImageView
             android:layout_width="wrap_content"
@@ -74,12 +74,13 @@
             android:layout_gravity="end"
             android:src="@drawable/share"
             android:paddingVertical="@dimen/text_on_settings"
-            android:paddingEnd="20dp"/>
+            android:paddingEnd="4dp"/>
     </FrameLayout>
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="61dp">
+        android:layout_height="@dimen/settings_button"
+        android:paddingHorizontal="@dimen/padding_horizontal">
 
         <TextView
             android:layout_width="wrap_content"
@@ -87,21 +88,20 @@
             android:text="@string/support"
             android:textSize="@dimen/settings_tsize"
             android:textColor="@color/black"
-            android:paddingVertical="@dimen/text_on_settings"
-            android:paddingStart="16dp"/>
+            android:paddingVertical="@dimen/text_on_settings"/>
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
             android:src="@drawable/support"
-            android:paddingVertical="@dimen/text_on_settings"
-            android:paddingEnd="16dp"/>
+            android:paddingVertical="@dimen/text_on_settings"/>
     </FrameLayout>
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="61dp">
+        android:layout_height="@dimen/settings_button"
+        android:paddingHorizontal="@dimen/padding_horizontal">
 
         <TextView
             android:layout_width="wrap_content"
@@ -109,8 +109,7 @@
             android:text="@string/terms_of_use"
             android:textSize="@dimen/settings_tsize"
             android:textColor="@color/black"
-            android:paddingVertical="@dimen/text_on_settings"
-            android:paddingStart="16dp"/>
+            android:paddingVertical="@dimen/text_on_settings"/>
 
         <ImageView
             android:layout_width="wrap_content"
@@ -118,7 +117,7 @@
             android:layout_gravity="end"
             android:src="@drawable/arrow_forward"
             android:paddingVertical="@dimen/text_on_settings"
-            android:paddingEnd="20dp"/>
+            android:paddingEnd="4dp"/>
     </FrameLayout>
 
 
