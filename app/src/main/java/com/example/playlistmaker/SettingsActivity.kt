@@ -28,8 +28,8 @@ class SettingsActivity : AppCompatActivity() {
 
         val buttonSupport = findViewById<FrameLayout>(R.id.buttonSupport)
         buttonSupport.setOnClickListener{
-            val message = "Спасибо разработчикам и разработчицам за крутое приложение!"
-            val subject = "Сообщение разработчикам и разработчицам приложения Playlist Maker"
+            val message = getString(R.string.message)
+            val subject = getString(R.string.subject)
             val shareIntent = Intent(Intent.ACTION_SENDTO)
             shareIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf("v.klimushin@ya.ru"))
             shareIntent.putExtra(Intent.EXTRA_SUBJECT, subject)

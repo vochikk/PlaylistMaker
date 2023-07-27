@@ -14,8 +14,9 @@ import android.widget.ImageView
 
 
 class SearchActivity : AppCompatActivity() {
-    var textEditText = ""
+    private var textEditText = ""
     lateinit var inputEditText: EditText
+    lateinit var buttonClear: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,7 +28,7 @@ class SearchActivity : AppCompatActivity() {
         }
 
         inputEditText = findViewById<EditText>(R.id.inputEditText)
-        val buttonClear = findViewById<ImageView>(R.id.buttonClear)
+        buttonClear = findViewById<ImageView>(R.id.buttonClear)
 
         buttonClear.setOnClickListener {
             inputEditText.setText("")
@@ -54,10 +55,6 @@ class SearchActivity : AppCompatActivity() {
 
     }
 
-    companion object {
-        const val TEXT_KEY = "TEXT_KEY"
-    }
-
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString(TEXT_KEY, textEditText)
@@ -80,5 +77,9 @@ class SearchActivity : AppCompatActivity() {
     private fun View.hideKeyboard () {
         val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
         inputMethodManager?.hideSoftInputFromWindow(windowToken, 0)
+    }
+
+    private companion object {
+        const val TEXT_KEY = "TEXT_KEY"
     }
 }

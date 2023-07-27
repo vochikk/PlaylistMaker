@@ -6,7 +6,8 @@
     android:layout_height="match_parent"
     android:background="?attr/colorPrimary"
     android:orientation="vertical"
-    android:paddingHorizontal="16dp">
+    android:paddingHorizontal="@dimen/padding_16"
+    android:paddingBottom="32dp">
 
     <TextView
         android:layout_width="wrap_content"
@@ -16,50 +17,35 @@
         android:textSize="@dimen/text_22"
         android:fontFamily="@font/ys_display_medium"
         android:textFontWeight="500"
-        android:layout_marginTop="16dp"/>
+        android:layout_marginTop="16dp"
+        android:paddingBottom="40dp"/>
 
-    <LinearLayout
+    <Button
+        android:paddingTop="40dp"
+        android:id="@+id/buttonSearch"
+        style="@style/ButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:paddingTop="40dp">
+        android:text="@string/search"
+        app:icon="@drawable/search"/>
 
-        <Button
-            android:id="@+id/buttonSearch"
-            style="@style/ButtonStyle"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="@string/search"
-            app:icon="@drawable/search"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
-
-        <Button
-            android:id="@+id/buttonLibrary"
-            style="@style/ButtonStyle"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="@string/library"
-            app:icon="@drawable/library"/>
-    </LinearLayout>
-
-    <LinearLayout
+    <Button
+        android:id="@+id/buttonLibrary"
+        style="@style/ButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:paddingBottom="28dp">
+        android:text="@string/library"
+        app:icon="@drawable/library"/>
 
-        <Button
-            android:id="@+id/buttonSettings"
-            style="@style/ButtonStyle"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="@string/settings"
-            app:icon="@drawable/settings"/>
-    </LinearLayout>
+    <Button
+        android:id="@+id/buttonSettings"
+        style="@style/ButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:text="@string/settings"
+        app:icon="@drawable/settings"/>
 
 </LinearLayout>

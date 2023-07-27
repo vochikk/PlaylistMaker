@@ -7,4 +7,6 @@
     <string name="share">Поделиться приложением</string>
     <string name="support">Написать в поддержку</string>
     <string name="terms_of_use">Пользовательское соглашение</string>
+    <string name="message">Спасибо разработчикам и разработчицам за крутое приложение!</string>
+    <string name="subject">Сообщение разработчикам и разработчицам приложения Playlist Maker</string>
 </resources>

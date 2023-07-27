@@ -16,14 +16,13 @@
     <style name="TextStyle">
         <item name="android:textSize">@dimen/text_16</item>
         <item name="android:textColor">?attr/colorPrimaryVariant</item>
-        <item name="android:paddingVertical">@dimen/text_on_settings</item>
+        <item name="android:paddingVertical">@dimen/padding_16</item>
         <item name="android:fontFamily">@font/ys_display_regular</item>
         <item name="android:textFontWeight">400</item>
     </style>
 
     <style name="IconStyle">
-        <item name="android:layout_gravity">end</item>
-        <item name="android:paddingVertical">@dimen/text_on_settings</item>
+        <item name="android:paddingVertical">@dimen/padding_16</item>
         <item name="android:tint">?attr/colorOnPrimary</item>
     </style>
 </resources>
