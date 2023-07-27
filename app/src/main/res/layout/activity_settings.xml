@@ -21,7 +21,7 @@
             android:paddingStart="@dimen/padding_20"
             app:tint="?attr/colorPrimaryVariant"
             android:layout_gravity="center"
-            android:contentDescription="Настройки" />
+            android:contentDescription="@string/settings" />
 
         <TextView
             android:layout_width="wrap_content"
