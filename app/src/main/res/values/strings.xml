@@ -9,4 +9,8 @@
     <string name="terms_of_use">Пользовательское соглашение</string>
     <string name="message">Спасибо разработчикам и разработчицам за крутое приложение!</string>
     <string name="subject">Сообщение разработчикам и разработчицам приложения Playlist Maker</string>
+    <string name="album_logo">album_logo</string>
+    <string name="track_name">Track name</string>
+    <string name="track_author">Track author</string>
+    <string name="track_time">2:44</string>
 </resources>

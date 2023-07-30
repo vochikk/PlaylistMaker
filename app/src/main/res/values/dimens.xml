@@ -2,9 +2,11 @@
 <resources>
     <dimen name="text_22">22sp</dimen>
     <dimen name="text_16">16sp</dimen>
+    <dimen name="text_11">11sp</dimen>
     <dimen name="main_cornersize">10dp</dimen>
     <dimen name="main_padonicon">10dp</dimen>
     <dimen name="settings_button">62dp</dimen>
+    <dimen name="padding_8">8dp</dimen>
     <dimen name="padding_16">16dp</dimen>
     <dimen name="padding_20">20dp</dimen>
     <dimen name="padding_48">48dp</dimen>
