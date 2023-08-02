@@ -25,7 +25,7 @@ class TrackViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
             .load(item.artworkUrl100)
             .placeholder(R.drawable.ic_placeholder)
             .centerCrop()
-            .transform(RoundedCorners(10))
+            .transform(RoundedCorners(2))
             .into(albumImage)
 
     }
