@@ -13,4 +13,7 @@
     <string name="track_name">Track name</string>
     <string name="track_author">Track author</string>
     <string name="track_time">2:44</string>
+    <string name="nothing_found">Ничего не найдено</string>
+    <string name="failure_text">Проблемы со связью\n\nЗагрузка не удалась. Проверьте подключение к интернету</string>
+    <string name="update">Обновить</string>
 </resources>
