@@ -80,33 +80,7 @@
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
     <LinearLayout
-        android:id="@+id/nothingPlaceholder"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:orientation="vertical"
-        android:paddingTop="@dimen/padding_48"
-        android:visibility="gone">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_nothing_found"
-            android:layout_gravity="center"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/nothing_found"
-            android:textColor="?attr/colorPrimaryVariant"
-            android:textSize="@dimen/text_19"
-            android:fontFamily="@font/ys_display_medium"
-            android:textFontWeight="400"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/failurePlaceholder"
+        android:id="@+id/placeholder"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/padding_48"
@@ -115,12 +89,14 @@
         android:visibility="gone">
 
         <ImageView
+            android:id="@+id/placeholderImage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_failure"
             android:layout_gravity="center"/>
 
         <TextView
+            android:id="@+id/placeholderText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"

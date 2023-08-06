@@ -15,6 +15,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
+import com.example.playlistmaker.databinding.ActivitySearchBinding
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -26,13 +27,7 @@ import java.util.Locale
 
 class SearchActivity : AppCompatActivity() {
     private var textEditText = ""
-    lateinit var backButton: ImageView
-    lateinit var inputEditText: EditText
-    lateinit var buttonClear: ImageView
-    lateinit var rvSearchList: RecyclerView
-    lateinit var nothingPlaceholder: LinearLayout
-    lateinit var failurePlaceholder: LinearLayout
-    lateinit var buttonUpdate: Button
+    private lateinit var binding: ActivitySearchBinding
 
     private val itunesBaseUrl = "https://itunes.apple.com/"
     private val retrofit = Retrofit.Builder()
@@ -46,6 +41,7 @@ class SearchActivity : AppCompatActivity() {
     private val adapter = TrackAdapter()
 
     private val callback = object: Callback<TracksResponse> {
+
         override fun onResponse(
             call: Call<TracksResponse>,
             response: Response<TracksResponse>
@@ -54,74 +50,70 @@ class SearchActivity : AppCompatActivity() {
                 tracks.clear()
                 if (response.body()?.results?.isNotEmpty() == true){
                     tracks.addAll(response.body()?.results!!)
-                    adapter.notifyDataSetChanged()
+                    showSearchResult(SearchStatus.SUCCESS)
                 }
                 if (tracks.isEmpty()) {
-                    showNothingPlaceholder()
+                    showSearchResult(SearchStatus.EMMPTY_SEARCH)
                 } else {
-                    showFailurePlaceholder()
+                    showSearchResult(SearchStatus.SEARCH_FAILURE)
                 }
             } else {
-                showFailurePlaceholder()
+                showSearchResult(SearchStatus.SEARCH_FAILURE)
             }
         }
 
         override fun onFailure(call: Call<TracksResponse>, t: Throwable) {
-            showFailurePlaceholder()
+            tracks.clear()
+            showSearchResult(SearchStatus.SEARCH_FAILURE)
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_search)
+        binding = ActivitySearchBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
 
-        backButton = findViewById(R.id.buttonBack)
-        backButton.setOnClickListener {
+        binding.buttonBack.setOnClickListener {
             finish()
         }
 
-        inputEditText = findViewById(R.id.inputEditText)
-        buttonClear = findViewById(R.id.buttonClear)
-        rvSearchList = findViewById(R.id.rvSearchList)
-        nothingPlaceholder = findViewById(R.id.nothingPlaceholder)
-        failurePlaceholder = findViewById(R.id.failurePlaceholder)
-        buttonUpdate = findViewById(R.id.buttonUpdate)
-
-        buttonClear.setOnClickListener {
-            inputEditText.setText("")
+        binding.buttonClear.setOnClickListener {
+            binding.inputEditText.setText("")
             it.hideKeyboard()
             tracks.clear()
             adapter.notifyDataSetChanged()
-            failurePlaceholder.visibility = View.GONE
-            nothingPlaceholder.visibility = View.GONE
+            binding.placeholder.visibility = View.GONE
         }
 
         val textWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                buttonClear.visibility = clearButtonVisibility(s)
-                textEditText = inputEditText.text.toString()
+                binding.buttonClear.visibility = clearButtonVisibility(s)
+                textEditText = binding.inputEditText.text.toString()
             }
 
             override fun afterTextChanged(s: Editable?) {}
         }
 
-        inputEditText.addTextChangedListener(textWatcher)
+        binding.inputEditText.addTextChangedListener(textWatcher)
 
         adapter.tracks = tracks
-        rvSearchList.adapter = adapter
+        binding.rvSearchList.adapter = adapter
 
-        inputEditText.setOnEditorActionListener { _, actionId, _ ->
+        binding.inputEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-
-
-                if (inputEditText.text.isNotEmpty()){
-                    itunesSearchService.search(inputEditText.text.toString()).enqueue(callback)
+                if (binding.inputEditText.text.isNotEmpty()){
+                    itunesSearchService.search(binding.inputEditText.text.toString()).enqueue(callback)
                 }
                 true
             }
             false
+        }
+
+        binding.buttonUpdate.setOnClickListener {
+            itunesSearchService.search(binding.inputEditText.text.toString()).enqueue(callback)
         }
     }
 
@@ -133,7 +125,7 @@ class SearchActivity : AppCompatActivity() {
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
         textEditText = savedInstanceState.getString(TEXT_KEY, "")
-        inputEditText.setText(textEditText)
+        binding.inputEditText.setText(textEditText)
     }
 
     private fun clearButtonVisibility(s: CharSequence?): Int {
@@ -149,15 +141,26 @@ class SearchActivity : AppCompatActivity() {
         inputMethodManager?.hideSoftInputFromWindow(windowToken, 0)
     }
 
-    private fun showNothingPlaceholder() {
-        nothingPlaceholder.visibility = View.VISIBLE
-    }
+    private fun showSearchResult (searchStatus: SearchStatus) {
+        when (searchStatus) {
+            SearchStatus.EMMPTY_SEARCH -> {
+                adapter.notifyDataSetChanged()
+                binding.placeholder.visibility = View.VISIBLE
+                binding.placeholderImage.setImageResource(R.drawable.ic_nothing_found)
+                binding.placeholderText.setText(R.string.nothing_found)
+                binding.buttonUpdate.visibility = View.GONE
 
-    private fun showFailurePlaceholder() {
-        failurePlaceholder.visibility = View.VISIBLE
-        buttonUpdate.setOnClickListener {
-            failurePlaceholder.visibility = View.GONE
-            itunesSearchService.search(inputEditText.text.toString()).enqueue(callback)
+            }
+            SearchStatus.SEARCH_FAILURE -> {
+                adapter.notifyDataSetChanged()
+                binding.placeholder.visibility = View.VISIBLE
+                binding.placeholderImage.setImageResource(R.drawable.ic_failure)
+                binding.placeholderText.setText(R.string.failure_text)
+                binding.buttonUpdate.visibility = View.VISIBLE
+            }
+            SearchStatus.SUCCESS -> {
+                adapter.notifyDataSetChanged()
+            }
         }
     }
 
