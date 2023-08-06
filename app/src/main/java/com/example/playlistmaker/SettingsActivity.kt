@@ -6,19 +6,20 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.FrameLayout
 import android.widget.ImageView
+import com.example.playlistmaker.databinding.ActivitySettingsBinding
 
 class SettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_settings)
+        var binding =  ActivitySettingsBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
 
-        val backButton = findViewById<ImageView>(R.id.buttonBack)
-        backButton.setOnClickListener {
+        binding.buttonBack.setOnClickListener {
             finish()
         }
 
-        val buttonShare = findViewById<FrameLayout>(R.id.buttonShare)
-        buttonShare.setOnClickListener{
+        binding.buttonShare.setOnClickListener{
             val intent = Intent()
             intent.action = Intent.ACTION_SEND
             intent.putExtra(Intent.EXTRA_TEXT, "https://practicum.yandex.ru/profile/android-developer/")
@@ -26,8 +27,7 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        val buttonSupport = findViewById<FrameLayout>(R.id.buttonSupport)
-        buttonSupport.setOnClickListener{
+        binding.buttonSupport.setOnClickListener{
             val message = getString(R.string.message)
             val subject = getString(R.string.subject)
             val shareIntent = Intent(Intent.ACTION_SENDTO)
@@ -38,8 +38,7 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(shareIntent)
         }
 
-        val buttonTerms = findViewById<FrameLayout>(R.id.buttonTerms)
-        buttonTerms.setOnClickListener{
+        binding.buttonTerms.setOnClickListener{
             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://yandex.ru/legal/practicum_offer/")))
         }
 
