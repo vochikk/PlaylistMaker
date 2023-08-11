@@ -35,24 +35,14 @@
 
     </LinearLayout>
 
-    <FrameLayout
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/themeSwitcher"
+        android:text="@string/night_theme"
+        android:layout_marginHorizontal="@dimen/padding_16"
+        android:layout_gravity="start"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/settings_button"
-        android:paddingHorizontal="@dimen/padding_16">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/night_theme"
-            style="@style/TextStyle"/>
-
-        <Switch
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="@style/IconStyle"
-            android:layout_gravity="end"
-            android:paddingEnd="2dp"/>
-    </FrameLayout>
+        android:layout_height="wrap_content"
+        style="@style/TextStyle" />
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -118,6 +108,5 @@
             style="@style/IconStyle"
             android:paddingEnd="4dp"/>
     </FrameLayout>
-
 
 </LinearLayout>

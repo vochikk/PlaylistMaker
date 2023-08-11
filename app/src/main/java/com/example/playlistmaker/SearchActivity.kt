@@ -8,22 +8,13 @@ import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import android.widget.Button
-import android.widget.EditText
-import android.widget.FrameLayout
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.Toast
-import androidx.recyclerview.widget.RecyclerView
+import androidx.core.view.isVisible
 import com.example.playlistmaker.databinding.ActivitySearchBinding
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.text.SimpleDateFormat
-import java.util.Locale
-
 
 class SearchActivity : AppCompatActivity() {
     private var textEditText = ""
@@ -39,6 +30,7 @@ class SearchActivity : AppCompatActivity() {
 
     private val tracks = ArrayList<Track>()
     private val adapter = TrackAdapter()
+    private val historyAdapter = TrackAdapter()
 
     private val callback = object: Callback<TracksResponse> {
 
@@ -74,16 +66,26 @@ class SearchActivity : AppCompatActivity() {
         val view = binding.root
         setContentView(view)
 
+        val sheredPref = getSharedPreferences(TRACK_LIST_HISTORY, MODE_PRIVATE)
+        val searchHistory = SearchHistory(sheredPref)
+        viewButtonRemove(searchHistory.getTrackList())
+
         binding.buttonBack.setOnClickListener {
             finish()
         }
 
         binding.buttonClear.setOnClickListener {
-            binding.inputEditText.setText("")
-            it.hideKeyboard()
-            tracks.clear()
-            adapter.notifyDataSetChanged()
+            clearInputEditText(it)
+            updateAdapterAfterClear(searchHistory)
             binding.placeholder.visibility = View.GONE
+            viewButtonRemove(searchHistory.getTrackList())
+        }
+
+        binding.inputEditText.setOnFocusChangeListener { v, hasFocus ->
+            binding.historySearch.visibility = if (binding.root.hasFocus() && binding.inputEditText.text?.isEmpty() == true)
+                View.VISIBLE else View.GONE
+            binding.placeholder.visibility = View.GONE
+            viewButtonRemove(searchHistory.getTrackList())
         }
 
         val textWatcher = object : TextWatcher {
@@ -92,6 +94,10 @@ class SearchActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 binding.buttonClear.visibility = clearButtonVisibility(s)
                 textEditText = binding.inputEditText.text.toString()
+                binding.historySearch.visibility = if (binding.inputEditText.hasFocus() && s?.isEmpty() == true)
+                    View.VISIBLE else View.GONE
+                binding.placeholder.visibility = View.GONE
+                viewButtonRemove(searchHistory.getTrackList())
             }
 
             override fun afterTextChanged(s: Editable?) {}
@@ -99,13 +105,34 @@ class SearchActivity : AppCompatActivity() {
 
         binding.inputEditText.addTextChangedListener(textWatcher)
 
+
         adapter.tracks = tracks
         binding.rvSearchList.adapter = adapter
+        adapter.setOnClickListener(object : TrackAdapter.OnClickListener {
+            override fun onClick(track: Track) {
+                searchHistory.saveTrack(track, searchHistory.getTrackList())
+            }
+        })
+
+        historyAdapter.tracks.addAll(searchHistory.getTrackList())
+        binding.rvHistorySearch.adapter = historyAdapter
+        historyAdapter.setOnClickListener(object : TrackAdapter.OnClickListener {
+            override fun onClick(track: Track) {
+                searchHistory.saveTrack(track, searchHistory.getTrackList())
+            }
+        })
+
 
         binding.inputEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 if (binding.inputEditText.text.isNotEmpty()){
                     itunesSearchService.search(binding.inputEditText.text.toString()).enqueue(callback)
+                } else {
+                    binding.rvSearchList.visibility = View.GONE
+                    historyAdapter.tracks.clear()
+                    historyAdapter.tracks.addAll(searchHistory.getTrackList())
+                    historyAdapter.notifyDataSetChanged()
+                    binding.historySearch.visibility = View.VISIBLE
                 }
                 true
             }
@@ -115,6 +142,15 @@ class SearchActivity : AppCompatActivity() {
         binding.buttonUpdate.setOnClickListener {
             itunesSearchService.search(binding.inputEditText.text.toString()).enqueue(callback)
         }
+
+        binding.buttonRemove.setOnClickListener {
+            searchHistory.removeTrackList()
+            historyAdapter.tracks.clear()
+            historyAdapter.notifyDataSetChanged()
+            binding.buttonRemove.visibility = View.GONE
+        }
+
+
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -159,12 +195,34 @@ class SearchActivity : AppCompatActivity() {
                 binding.buttonUpdate.visibility = View.VISIBLE
             }
             SearchStatus.SUCCESS -> {
+                binding.placeholder.visibility = View.GONE
+                binding.rvSearchList.visibility = View.VISIBLE
                 adapter.notifyDataSetChanged()
             }
         }
     }
 
-    private companion object {
+    private fun viewButtonRemove (trackList: ArrayList<Track>) {
+        binding.buttonRemove.visibility = if (trackList.isNotEmpty() && binding.historySearch.isVisible)
+            View.VISIBLE else View.GONE
+
+    }
+
+    private fun updateAdapterAfterClear (searchHistory: SearchHistory) {
+        tracks.clear()
+        adapter.notifyDataSetChanged()
+        historyAdapter.tracks.clear()
+        historyAdapter.tracks.addAll(searchHistory.getTrackList())
+        historyAdapter.notifyDataSetChanged()
+    }
+
+    private fun clearInputEditText (view: View) {
+        binding.inputEditText.setText("")
+        view.hideKeyboard()
+    }
+
+    companion object {
+        const val TRACK_LIST_HISTORY = "track_list_history"
         const val TEXT_KEY = "TEXT_KEY"
     }
 }
