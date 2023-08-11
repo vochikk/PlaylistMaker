@@ -16,9 +16,6 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-const val TRACK_LIST_HISTORY = "track_list_history"
-const val TEXT_KEY = "TEXT_KEY"
-
 class SearchActivity : AppCompatActivity() {
     private var textEditText = ""
     private lateinit var binding: ActivitySearchBinding
@@ -34,7 +31,6 @@ class SearchActivity : AppCompatActivity() {
     private val tracks = ArrayList<Track>()
     private val adapter = TrackAdapter()
     private val historyAdapter = TrackAdapter()
-
 
     private val callback = object: Callback<TracksResponse> {
 
@@ -79,13 +75,8 @@ class SearchActivity : AppCompatActivity() {
         }
 
         binding.buttonClear.setOnClickListener {
-            binding.inputEditText.setText("")
-            it.hideKeyboard()
-            tracks.clear()
-            adapter.notifyDataSetChanged()
-            historyAdapter.tracks.clear()
-            historyAdapter.tracks.addAll(searchHistory.getTrackList())
-            historyAdapter.notifyDataSetChanged()
+            clearInputEditText(it)
+            updateAdapterAfterClear(searchHistory)
             binding.placeholder.visibility = View.GONE
             viewButtonRemove(searchHistory.getTrackList())
         }
@@ -215,5 +206,23 @@ class SearchActivity : AppCompatActivity() {
         binding.buttonRemove.visibility = if (trackList.isNotEmpty() && binding.historySearch.isVisible)
             View.VISIBLE else View.GONE
 
+    }
+
+    private fun updateAdapterAfterClear (searchHistory: SearchHistory) {
+        tracks.clear()
+        adapter.notifyDataSetChanged()
+        historyAdapter.tracks.clear()
+        historyAdapter.tracks.addAll(searchHistory.getTrackList())
+        historyAdapter.notifyDataSetChanged()
+    }
+
+    private fun clearInputEditText (view: View) {
+        binding.inputEditText.setText("")
+        view.hideKeyboard()
+    }
+
+    companion object {
+        const val TRACK_LIST_HISTORY = "track_list_history"
+        const val TEXT_KEY = "TEXT_KEY"
     }
 }
