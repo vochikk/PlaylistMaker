@@ -1,6 +1,7 @@
 package com.example.playlistmaker
 
 import android.content.Context
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
@@ -111,6 +112,7 @@ class SearchActivity : AppCompatActivity() {
         adapter.setOnClickListener(object : TrackAdapter.OnClickListener {
             override fun onClick(track: Track) {
                 searchHistory.saveTrack(track, searchHistory.getTrackList())
+                startPlayer(track)
             }
         })
 
@@ -119,6 +121,7 @@ class SearchActivity : AppCompatActivity() {
         historyAdapter.setOnClickListener(object : TrackAdapter.OnClickListener {
             override fun onClick(track: Track) {
                 searchHistory.saveTrack(track, searchHistory.getTrackList())
+                startPlayer(track)
             }
         })
 
@@ -219,6 +222,11 @@ class SearchActivity : AppCompatActivity() {
     private fun clearInputEditText (view: View) {
         binding.inputEditText.setText("")
         view.hideKeyboard()
+    }
+
+    private fun startPlayer (track: Track) {
+        val intent = Intent(this@SearchActivity, PlayerActivity::class.java)
+        startActivity(intent)
     }
 
     companion object {
