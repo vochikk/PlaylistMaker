@@ -6,6 +6,7 @@ import android.os.PersistableBundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.databinding.ActivityPlayerBinding
 import com.google.gson.Gson
 
@@ -18,18 +19,16 @@ class PlayerActivity : AppCompatActivity() {
         val view = binding.root
         setContentView(view)
 
-        drawLayout()
+        val json = intent.getStringExtra(TRACK_KEY)
+        val track = Gson().fromJson(json, Track::class.java)
+        drawLayout(track)
 
         binding.buttonBack.setOnClickListener {
             finish()
         }
     }
 
-    private fun drawLayout () {
-        val sheredPref = getSharedPreferences(SearchActivity.TRACK_LIST_HISTORY, MODE_PRIVATE)
-        val json = sheredPref.getString(TRACK_LIST_KEY, null)
-        val tracks = Gson().fromJson(json, Array<Track>::class.java)
-        val track = tracks[0]
+    private fun drawLayout (track: Track) {
 
         binding.trackName.setText(track.trackName)
         binding.artistName.setText(track.artistName)
@@ -42,6 +41,7 @@ class PlayerActivity : AppCompatActivity() {
         Glide.with(this)
             .load(itemUrl)
             .placeholder(R.drawable.ic_placeholder_312x312)
+            .transform(RoundedCorners(24))
             .into(binding.imageAlbum)
 
         if (track.collectionName?.isEmpty() == null) {

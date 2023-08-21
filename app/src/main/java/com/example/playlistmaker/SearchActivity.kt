@@ -11,11 +11,15 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.core.view.isVisible
 import com.example.playlistmaker.databinding.ActivitySearchBinding
+import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+
+
+const val TRACK_KEY = "track_key"
 
 class SearchActivity : AppCompatActivity() {
     private var textEditText = ""
@@ -226,6 +230,8 @@ class SearchActivity : AppCompatActivity() {
 
     private fun startPlayer (track: Track) {
         val intent = Intent(this@SearchActivity, PlayerActivity::class.java)
+        val trackToSend = Gson().toJson(track)
+        intent.putExtra(TRACK_KEY, trackToSend)
         startActivity(intent)
     }
 

@@ -24,7 +24,7 @@ class TrackViewHolder(parent: ViewGroup): RecyclerView.ViewHolder(LayoutInflater
     fun bind (item: Track) {
         trackName.text = item.trackName
         artistName.text = item.artistName
-        trackTime.text = formatTime(item.trackTimeMillis)
+        trackTime.text = item.formatTime(item.trackTimeMillis)
 
         Glide.with(itemView)
             .load(item.artworkUrl100)
@@ -33,10 +33,6 @@ class TrackViewHolder(parent: ViewGroup): RecyclerView.ViewHolder(LayoutInflater
             .transform(RoundedCorners(2))
             .into(albumImage)
 
-    }
-
-    private fun formatTime(timeMillis: Long): String {
-        return SimpleDateFormat("mm:ss", Locale.getDefault()).format(timeMillis)
     }
 
 }
