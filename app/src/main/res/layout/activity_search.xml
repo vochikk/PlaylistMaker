@@ -160,4 +160,12 @@
             android:backgroundTint="?attr/colorPrimaryVariant"/>
     </LinearLayout>
 
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="@dimen/padding_48"
+        android:layout_height="@dimen/padding_48"
+        android:layout_gravity="center"
+        android:indeterminateTint="@color/backround_blue"
+        android:visibility="gone"/>
+
 </LinearLayout>
