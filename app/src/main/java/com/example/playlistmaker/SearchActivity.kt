@@ -4,6 +4,8 @@ import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -33,9 +35,12 @@ class SearchActivity : AppCompatActivity() {
 
     private val itunesSearchService = retrofit.create(SearchiTunesApi::class.java)
 
+    private var isClickAllowed = true
     private val tracks = ArrayList<Track>()
     private val adapter = TrackAdapter()
     private val historyAdapter = TrackAdapter()
+    private val searchRunnable = Runnable { searchRequest() }
+    private val handler = Handler (Looper.getMainLooper())
 
     private val callback = object: Callback<TracksResponse> {
 
@@ -43,9 +48,11 @@ class SearchActivity : AppCompatActivity() {
             call: Call<TracksResponse>,
             response: Response<TracksResponse>
         ) {
+            binding.progressBar.visibility = View.GONE
             if(response.code() == 200) {
                 tracks.clear()
                 if (response.body()?.results?.isNotEmpty() == true){
+                    binding.rvSearchList.visibility = View.VISIBLE
                     tracks.addAll(response.body()?.results!!)
                     showSearchResult(SearchStatus.SUCCESS)
                 }
@@ -60,6 +67,7 @@ class SearchActivity : AppCompatActivity() {
         }
 
         override fun onFailure(call: Call<TracksResponse>, t: Throwable) {
+            binding.progressBar.visibility = View.GONE
             tracks.clear()
             showSearchResult(SearchStatus.SEARCH_FAILURE)
         }
@@ -97,6 +105,7 @@ class SearchActivity : AppCompatActivity() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                searchDebounce()
                 binding.buttonClear.visibility = clearButtonVisibility(s)
                 textEditText = binding.inputEditText.text.toString()
                 binding.historySearch.visibility = if (binding.inputEditText.hasFocus() && s?.isEmpty() == true)
@@ -116,7 +125,9 @@ class SearchActivity : AppCompatActivity() {
         adapter.setOnClickListener(object : TrackAdapter.OnClickListener {
             override fun onClick(track: Track) {
                 searchHistory.saveTrack(track, searchHistory.getTrackList())
-                startPlayer(track)
+                if (clickDebounce()) {
+                    startPlayer(track)
+                }
             }
         })
 
@@ -125,29 +136,14 @@ class SearchActivity : AppCompatActivity() {
         historyAdapter.setOnClickListener(object : TrackAdapter.OnClickListener {
             override fun onClick(track: Track) {
                 searchHistory.saveTrack(track, searchHistory.getTrackList())
-                startPlayer(track)
+                if (clickDebounce()) {
+                    startPlayer(track)
+                }
             }
         })
 
-
-        binding.inputEditText.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                if (binding.inputEditText.text.isNotEmpty()){
-                    itunesSearchService.search(binding.inputEditText.text.toString()).enqueue(callback)
-                } else {
-                    binding.rvSearchList.visibility = View.GONE
-                    historyAdapter.tracks.clear()
-                    historyAdapter.tracks.addAll(searchHistory.getTrackList())
-                    historyAdapter.notifyDataSetChanged()
-                    binding.historySearch.visibility = View.VISIBLE
-                }
-                true
-            }
-            false
-        }
-
         binding.buttonUpdate.setOnClickListener {
-            itunesSearchService.search(binding.inputEditText.text.toString()).enqueue(callback)
+            searchRequest()
         }
 
         binding.buttonRemove.setOnClickListener {
@@ -182,6 +178,16 @@ class SearchActivity : AppCompatActivity() {
     private fun View.hideKeyboard () {
         val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
         inputMethodManager?.hideSoftInputFromWindow(windowToken, 0)
+    }
+
+    private fun searchRequest () {
+        if (binding.inputEditText.text.isNotEmpty()) {
+            binding.placeholder.visibility = View.GONE
+            binding.rvSearchList.visibility = View.GONE
+            binding.progressBar.visibility = View.VISIBLE
+
+            itunesSearchService.search(binding.inputEditText.text.toString()).enqueue(callback)
+        }
     }
 
     private fun showSearchResult (searchStatus: SearchStatus) {
@@ -235,8 +241,24 @@ class SearchActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
+    private fun searchDebounce () {
+        handler.removeCallbacks(searchRunnable)
+        handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
+    }
+
+    private fun clickDebounce() : Boolean {
+        val current = isClickAllowed
+        if (isClickAllowed) {
+            isClickAllowed = false
+            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
+        }
+        return current
+    }
+
     companion object {
         const val TRACK_LIST_HISTORY = "track_list_history"
         const val TEXT_KEY = "TEXT_KEY"
+        const val SEARCH_DEBOUNCE_DELAY = 2000L
+        const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 }

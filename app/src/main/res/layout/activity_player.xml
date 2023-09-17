@@ -78,7 +78,7 @@
         android:background="?attr/colorOnBackground"
         android:src="@drawable/ic_button_play"
         android:layout_marginTop="@dimen/padding_48"
-        android:contentDescription="@string/button_add"
+        android:contentDescription="@string/button_play"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/artistName"
@@ -90,7 +90,7 @@
         android:layout_height="54dp"
         android:background="@drawable/rounded_button"
         android:src="@drawable/ic_button_add"
-        android:contentDescription="@string/button_play"
+        android:contentDescription="@string/button_add"
         app:layout_constraintStart_toEndOf="@id/left_guidline"
         app:layout_constraintTop_toTopOf="@id/buttonPlay"
         app:layout_constraintBottom_toBottomOf="@id/buttonPlay"/>
