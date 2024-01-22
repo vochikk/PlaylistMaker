@@ -1,13 +1,13 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.presentation.ui
 
-import android.app.Application
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.FrameLayout
-import android.widget.ImageView
+import com.example.playlistmaker.App
+import com.example.playlistmaker.DARK_THEME_KEY
+import com.example.playlistmaker.DARK_THEME_SETTINGS
+import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivitySettingsBinding
 
 class SettingsActivity : AppCompatActivity() {
