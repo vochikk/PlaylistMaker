@@ -1,9 +1,9 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.data.dto
 
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-data class Track (
+data class TrackDto (
     val trackId: Long,
     val trackName: String,
     val artistName: String,
@@ -14,14 +14,4 @@ data class Track (
     val trackTimeMillis: Long,
     val artworkUrl100: String,
     val previewUrl: String
-    ) {
-
-    fun getCoverArtwork() = artworkUrl100.replaceAfterLast('/',"512x512bb.jpg")
-
-    fun formatTime(timeMillis: Long): String {
-        return SimpleDateFormat("mm:ss", Locale.getDefault()).format(timeMillis)
-    }
-
-    fun getReleaseYear () = releaseDate.substring(0, 4)
-}
-
+)

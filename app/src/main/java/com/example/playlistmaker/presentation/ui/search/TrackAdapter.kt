@@ -1,10 +1,8 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.presentation.ui.search
 
-import android.location.GnssAntennaInfo.Listener
-import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.google.gson.Gson
+import com.example.playlistmaker.domain.models.Track
 
 class TrackAdapter (): RecyclerView.Adapter<TrackViewHolder> () {
     var tracks = ArrayList<Track>()

@@ -1,26 +1,27 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.presentation.ui.player
 
-import android.content.Intent
-import android.icu.text.SimpleDateFormat
-import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.os.PersistableBundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.example.playlistmaker.Creator
+import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivityPlayerBinding
+import com.example.playlistmaker.domain.api.OnStateChangeListener
+import com.example.playlistmaker.domain.models.PlayerState
+import com.example.playlistmaker.domain.models.Track
+import com.example.playlistmaker.presentation.ui.search.TRACK_KEY
 import com.google.gson.Gson
-import java.util.Locale
 
 
 class PlayerActivity : AppCompatActivity() {
     private lateinit var binding: ActivityPlayerBinding
-    private var mediaPlayer = MediaPlayer()
-    private var playerState = STATE_DEFAULT
     private var handler = Handler(Looper.getMainLooper())
+    private val interactor = Creator.providesPlayerInteractor()
+    private var newPlayerState = PlayerState.DEFAULT
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,37 +31,56 @@ class PlayerActivity : AppCompatActivity() {
 
         val json = intent.getStringExtra(TRACK_KEY)
         val track = Gson().fromJson(json, Track::class.java)
-        drawLayout(track)
 
-        preparePlayer(track)
+        drawLayout(track)
+        interactor.prepare(track)
+
+        interactor.setListener( object : OnStateChangeListener {
+            override fun onChange(state: PlayerState) {
+                when (state) {
+                    PlayerState.DEFAULT -> {}
+                    PlayerState.PREPARED -> {
+                        binding.buttonPlay.setImageResource(R.drawable.ic_button_play)
+                    }
+                    PlayerState.PLAYING -> {
+                        binding.buttonPlay.setImageResource(R.drawable.ic_button_pause)
+                    }
+                    PlayerState.PAUSING -> {
+                        binding.buttonPlay.setImageResource(R.drawable.ic_button_play)
+                    }
+                    PlayerState.ENDING -> {
+                        handler.removeCallbacksAndMessages(null)
+                        binding.playTime.text = "00:00"
+                        binding.buttonPlay.setImageResource(R.drawable.ic_button_play)
+                    }
+                }
+                newPlayerState = state
+            }
+        })
 
         binding.buttonBack.setOnClickListener {
             finish()
         }
 
-        mediaPlayer.setOnCompletionListener {
-            handler.removeCallbacksAndMessages(null)
-            binding.playTime.text = "00:00"
-            binding.buttonPlay.setImageResource(R.drawable.ic_button_play)
-            playerState = STATE_PREPARED
-        }
-
         binding.buttonPlay.setOnClickListener {
-            when (playerState) {
-                STATE_PREPARED, STATE_PAUSED -> startPlayer()
-                STATE_PLAYING -> pausePlayer()
+            if (newPlayerState == PlayerState.PLAYING) {
+                interactor.pause()
+            } else {
+                interactor.play()
+                startTimer()
             }
         }
+
     }
     override fun onPause() {
         super.onPause()
-        pausePlayer()
+        interactor.pause()
         handler.removeCallbacksAndMessages(null)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        mediaPlayer.release()
+        interactor.realese()
         handler.removeCallbacksAndMessages(null)
     }
 
@@ -88,31 +108,6 @@ class PlayerActivity : AppCompatActivity() {
         }
     }
 
-    private fun preparePlayer(track: Track) {
-        mediaPlayer.setDataSource(track.previewUrl)
-        mediaPlayer.prepareAsync()
-        mediaPlayer.setOnPreparedListener {
-            binding.buttonPlay.isEnabled = true
-            playerState = STATE_PREPARED
-        }
-        mediaPlayer.setOnCompletionListener {
-            playerState = STATE_PREPARED
-        }
-    }
-
-    private fun startPlayer() {
-        mediaPlayer.start()
-        binding.buttonPlay.setImageResource(R.drawable.ic_button_pause)
-        playerState = STATE_PLAYING
-        startTimer()
-    }
-
-    private fun pausePlayer() {
-        mediaPlayer.pause()
-        binding.buttonPlay.setImageResource(R.drawable.ic_button_play)
-        playerState = STATE_PAUSED
-    }
-
     private fun startTimer () {
         handler.post(updateTimerTask())
     }
@@ -120,11 +115,8 @@ class PlayerActivity : AppCompatActivity() {
     private fun updateTimerTask () : Runnable {
         return object : Runnable {
             override fun run() {
-                if (playerState == STATE_PLAYING) {
-                    binding.playTime.text = SimpleDateFormat(
-                        "mm:ss",
-                        Locale.getDefault()
-                    ).format(mediaPlayer.currentPosition)
+                if (newPlayerState == PlayerState.PLAYING) {
+                    binding.playTime.text = interactor.getTimer()
                     handler.postDelayed(this, TIMER_DELAY)
                 } else {
                     handler.removeCallbacks(this)
@@ -134,10 +126,6 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     companion object {
-        private const val STATE_DEFAULT = 0
-        private const val STATE_PREPARED = 1
-        private const val STATE_PLAYING = 2
-        private const val STATE_PAUSED = 3
         private const val TIMER_DELAY = 500L
     }
 
