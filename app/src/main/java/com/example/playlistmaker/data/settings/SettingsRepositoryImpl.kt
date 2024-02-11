@@ -1,11 +1,12 @@
-package com.example.playlistmaker.data.settings.impl
+package com.example.playlistmaker.data.settings
 
 import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import com.example.playlistmaker.DARK_THEME_KEY
-import com.example.playlistmaker.DARK_THEME_SETTINGS
-import com.example.playlistmaker.data.settings.SettingsRepository
+import com.example.playlistmaker.domain.settings.SettingsRepository
+
+const val DARK_THEME_SETTINGS = "dark_theme_settings"
+const val DARK_THEME_KEY = "dark_theme_key"
 
 class SettingsRepositoryImpl(private val context: Context): SettingsRepository {
 

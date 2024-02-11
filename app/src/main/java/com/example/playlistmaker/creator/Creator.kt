@@ -4,9 +4,9 @@ import android.content.Context
 import com.example.playlistmaker.data.player.PlayerRepositoryImpl
 import com.example.playlistmaker.data.search.impl.TracksRepositoryImpl
 import com.example.playlistmaker.data.search.network.RetrofitNetworkClient
-import com.example.playlistmaker.data.settings.SettingsRepository
-import com.example.playlistmaker.data.settings.impl.SettingsRepositoryImpl
-import com.example.playlistmaker.data.sharing.ExternalNavigator
+import com.example.playlistmaker.domain.settings.SettingsRepository
+import com.example.playlistmaker.data.settings.SettingsRepositoryImpl
+import com.example.playlistmaker.domain.sharing.ExternalNavigator
 import com.example.playlistmaker.data.sharing.impl.ExternalNavigatorImpl
 import com.example.playlistmaker.data.storage.SheredPrefStorageClient
 import com.example.playlistmaker.domain.player.PlayerInteractor
@@ -52,6 +52,6 @@ object Creator {
     }
 
     fun providesSharingInteractor (context: Context) : SharingInteractor {
-        return SharingInteractorImpl(getExternalNavigator(context), context)
+        return SharingInteractorImpl(getExternalNavigator(context))
     }
 }
