@@ -1,7 +1,7 @@
 package com.example.playlistmaker.data.storage
 
 import android.content.Context
-import com.example.playlistmaker.data.dto.TrackDto
+import com.example.playlistmaker.data.search.dto.TrackDto
 import com.google.gson.Gson
 
 const val TRACK_LIST_KEY = "track_list_key"
