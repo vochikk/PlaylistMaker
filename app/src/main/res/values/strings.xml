@@ -9,6 +9,8 @@
     <string name="terms_of_use">Пользовательское соглашение</string>
     <string name="message">Спасибо разработчикам и разработчицам за крутое приложение!</string>
     <string name="subject">Сообщение разработчикам и разработчицам приложения Playlist Maker</string>
+    <string name="email_adress">v.klimushin@ya.ru</string>
+    <string name="terms">https://yandex.ru/legal/practicum_termsofuse/</string>
     <string name="album_logo">album_logo</string>
     <string name="track_name">Track name</string>
     <string name="track_author">Track author</string>
