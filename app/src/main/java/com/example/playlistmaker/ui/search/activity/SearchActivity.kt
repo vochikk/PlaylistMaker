@@ -20,6 +20,7 @@ import com.example.playlistmaker.ui.search.state.StatusVisability
 import com.example.playlistmaker.ui.search.state.SearchState
 import com.example.playlistmaker.ui.search.view_model.SearchViewModel
 import com.google.gson.Gson
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 const val TRACK_KEY = "track_key"
 
@@ -32,7 +33,7 @@ class SearchActivity : AppCompatActivity() {
     private val adapter = TrackAdapter()
     private val historyAdapter = TrackAdapter()
     private val handler = Handler (Looper.getMainLooper())
-    private lateinit var viewModel: SearchViewModel
+    private val viewModel by viewModel<SearchViewModel>()
 
 
 
@@ -41,8 +42,6 @@ class SearchActivity : AppCompatActivity() {
         binding = ActivitySearchBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
-
-        viewModel = ViewModelProvider(this, SearchViewModel.getSearchViewModel(this))[SearchViewModel::class.java]
 
         viewModel.getSearchStateLiveData().observe(this) {state ->
             render(state)

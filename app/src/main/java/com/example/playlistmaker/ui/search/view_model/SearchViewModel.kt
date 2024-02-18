@@ -7,10 +7,6 @@ import android.os.SystemClock
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.domain.player.models.Track
 import com.example.playlistmaker.domain.search.TracksInteractor
 import com.example.playlistmaker.ui.search.state.SearchState
@@ -82,13 +78,5 @@ class SearchViewModel(
     companion object {
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
         private val SEARCH_REQUEST_TOKEN = Any()
-
-        fun getSearchViewModel(context: Context): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                val tracksInteractor = Creator.providesTracksInteractor(context)
-
-                SearchViewModel(tracksInteractor)
-            }
-        }
     }
 }

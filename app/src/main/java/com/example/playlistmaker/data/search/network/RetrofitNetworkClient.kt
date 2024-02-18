@@ -6,15 +6,9 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.lang.Exception
 
-class RetrofitNetworkClient () : NetworkClient {
-    private val itunesBaseUrl = "https://itunes.apple.com/"
-
-    private val retrofit = Retrofit.Builder()
-        .baseUrl(itunesBaseUrl)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-
-    private val itunesSearchService = retrofit.create(SearchiTunesApi::class.java)
+class RetrofitNetworkClient (
+    private val itunesSearchService: SearchiTunesApi
+    ): NetworkClient {
 
     override fun doRequest(dto: Any) : Response {
         try {
