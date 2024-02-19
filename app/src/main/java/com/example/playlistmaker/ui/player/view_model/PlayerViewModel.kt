@@ -3,17 +3,14 @@ package com.example.playlistmaker.ui.player.view_model
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.domain.player.OnStateChangeListener
+import com.example.playlistmaker.domain.player.PlayerInteractor
 import com.example.playlistmaker.domain.player.models.Track
 import com.example.playlistmaker.domain.player.state.PlayerState
 
-class PlayerViewModel: ViewModel() {
-
-    private val playerInteractor = Creator.providesPlayerInteractor()
+class PlayerViewModel(
+    private val playerInteractor: PlayerInteractor
+    ): ViewModel() {
 
     private val playerStateLiveDate = MutableLiveData<PlayerState>()
 
@@ -47,13 +44,4 @@ class PlayerViewModel: ViewModel() {
     fun getTimer() : String {
         return playerInteractor.getTimer()
     }
-
-    companion object {
-        fun getViewModelFactory(): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                PlayerViewModel()
-            }
-        }
-    }
-
 }

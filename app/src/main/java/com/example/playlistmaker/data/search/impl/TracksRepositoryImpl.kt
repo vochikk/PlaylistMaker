@@ -10,8 +10,10 @@ import com.example.playlistmaker.domain.player.models.Track
 
 const val MAX_COUNT = 10
 
-class TracksRepositoryImpl (private val networkClient: NetworkClient, private val storageClient: StorageClient) :
-    TracksRepository {
+class TracksRepositoryImpl(
+    private val networkClient: NetworkClient,
+    private val storageClient: StorageClient): TracksRepository {
+
     override fun searchTracks(expression: String): List<Track>? {
         val response = networkClient.doRequest(TracksSearchRequest(expression))
         return when {
