@@ -3,6 +3,7 @@
     <string name="search">Поиск</string>
     <string name="library">Медиатека</string>
     <string name="settings">Настройки</string>
+    
     <string name="night_theme">Темная тема</string>
     <string name="share">Поделиться приложением</string>
     <string name="support">Написать в поддержку</string>
@@ -11,26 +12,37 @@
     <string name="subject">Сообщение разработчикам и разработчицам приложения Playlist Maker</string>
     <string name="email_adress">v.klimushin@ya.ru</string>
     <string name="terms">https://yandex.ru/legal/practicum_termsofuse/</string>
+    
     <string name="album_logo">album_logo</string>
     <string name="track_name">Track name</string>
     <string name="track_author">Track author</string>
     <string name="track_time">00:00</string>
+    
     <string name="nothing_found">Ничего не найдено</string>
     <string name="failure_text">Проблемы со связью\n\nЗагрузка не удалась. Проверьте подключение к интернету</string>
     <string name="update">Обновить</string>
     <string name="history_search">Вы искали</string>
     <string name="remove_history">очистить историю</string>
+    
     <string name="image_album">лого альбома</string>
     <string name="label_track_time">Длительность</string>
     <string name="label_album_name">Альбом</string>
     <string name="label_release_date">Год</string>
     <string name="label_genre_name">Жанр</string>
     <string name="label_country">Страна</string>
-    <string name="button_add">кнопка добавить</string>
-    <string name="button_play">кнопка играть</string>
-    <string name="button_like">кнопка лайк</string>
     <string name="album_name">Album name</string>
     <string name="release_date">2023</string>
     <string name="genre_name">Genre name</string>
     <string name="country">Country</string>
+
+    <string name="button_add">кнопка добавить</string>
+    <string name="button_play">кнопка играть</string>
+    <string name="button_like">кнопка лайк</string>
+    
+    <string name="library_is_empty">Ваша медиатека пуста</string>
+    <string name="playlist_is_empty">Вы не создали \n ни одного плейлиста</string>
+    <string name="new_playlist">Новый плейлист</string>
+
+    <string name="favorite">  Избранные треки  </string>
+    <string name="playlists">   Плейлисты   </string>
 </resources>

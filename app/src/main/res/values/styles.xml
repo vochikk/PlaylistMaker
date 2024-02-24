@@ -26,4 +26,9 @@
         <item name="android:paddingVertical">@dimen/padding_16</item>
         <item name="android:tint">?attr/colorOnPrimary</item>
     </style>
+
+    <style name="TextLibraryStyle" parent="TextStyle">
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:textFontWeight">500</item>
+    </style>
 </resources>
