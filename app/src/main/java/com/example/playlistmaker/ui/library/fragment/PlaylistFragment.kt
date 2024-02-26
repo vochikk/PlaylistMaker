@@ -51,7 +51,7 @@ class PlaylistFragment: Fragment() {
     }
 
     private fun render() {
-        binding.apply {
+        with(binding) {
             buttonNewPlaylist.visibility = View.VISIBLE
             placeholderImage.visibility = View.VISIBLE
             placeholderText.visibility = View.VISIBLE

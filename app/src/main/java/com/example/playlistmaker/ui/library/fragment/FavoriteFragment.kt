@@ -52,7 +52,7 @@ class FavoriteFragment: Fragment() {
     }
 
     private fun render() {
-        binding.apply {
+        with(binding) {
             placeholderImage.visibility = View.VISIBLE
             placeholderText.visibility = View.VISIBLE
         }
