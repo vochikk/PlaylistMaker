@@ -50,12 +50,12 @@ class SearchFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.getSearchStateLiveData().observe(viewLifecycleOwner) {state ->
+        viewModel.searchStateLiveData.observe(viewLifecycleOwner) {state ->
             render(state)
         }
 
         tracks = viewModel.getTracksList()
-        viewButtonRemove()
+        setViewElement()
 
         showViewOnScreen(StatusVisability.HISTORY_VISIBLE)
 
@@ -64,14 +64,14 @@ class SearchFragment: Fragment() {
             clearInputEditText(it)
             updateAdapterAfterClear(emptyList())
             binding.placeholder.visibility = View.GONE
-            viewButtonRemove()
+            setViewElement()
         }
 
         binding.inputEditText.setOnFocusChangeListener { v, hasFocus ->
             binding.historySearch.visibility = if (binding.root.hasFocus() && binding.inputEditText.text?.isEmpty() == true)
                 View.VISIBLE else View.GONE
             binding.placeholder.visibility = View.GONE
-            viewButtonRemove()
+            setViewElement()
         }
 
         textWatcher = object : TextWatcher {
@@ -86,7 +86,7 @@ class SearchFragment: Fragment() {
                 binding.historySearch.visibility = if (binding.inputEditText.hasFocus() && s?.isEmpty() == true)
                     View.VISIBLE else View.GONE
                 binding.placeholder.visibility = View.GONE
-                viewButtonRemove()
+                setViewElement()
             }
 
             override fun afterTextChanged(s: Editable?) {}
@@ -124,7 +124,7 @@ class SearchFragment: Fragment() {
         binding.buttonRemove.setOnClickListener {
             viewModel.clearTracksList()
             updateAdapterAfterClear(emptyList())
-            viewButtonRemove()
+            setViewElement()
         }
     }
 
@@ -160,7 +160,7 @@ class SearchFragment: Fragment() {
             is SearchState.HistoryView -> {
                 showViewOnScreen(StatusVisability.HISTORY_VISIBLE)
                 updateAdapterAfterClear(viewModel.getTracksList())
-                viewButtonRemove()
+                setViewElement()
             }
         }
     }
@@ -210,10 +210,20 @@ class SearchFragment: Fragment() {
         }
     }
 
+    private fun setViewElement() {
+        viewTitleHistory()
+        viewButtonRemove()
+    }
+
     private fun viewButtonRemove () {
         binding.buttonRemove.visibility = if (viewModel.getTracksList().isNotEmpty() && binding.historySearch.isVisible)
             View.VISIBLE else View.GONE
 
+    }
+
+    private fun viewTitleHistory() {
+        binding.titleHistory.visibility = if (viewModel.getTracksList().isNotEmpty() && binding.historySearch.isVisible)
+            View.VISIBLE else View.GONE
     }
 
     private fun updateAdapterAfterClear (trackList: List<Track>) {
@@ -241,13 +251,13 @@ class SearchFragment: Fragment() {
         val current = isClickAllowed
         if (isClickAllowed) {
             isClickAllowed = false
-            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
+            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY_MILLIS)
         }
         return current
     }
 
     companion object {
         const val TRACK_KEY = "TRACK_KEY"
-        const val CLICK_DEBOUNCE_DELAY = 1000L
+        const val CLICK_DEBOUNCE_DELAY_MILLIS = 1000L
     }
 }

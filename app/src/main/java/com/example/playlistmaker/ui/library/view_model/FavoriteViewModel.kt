@@ -6,6 +6,6 @@ import androidx.lifecycle.ViewModel
 
 class FavoriteViewModel(val isVisible: Boolean): ViewModel() {
 
-    private val stateLiveData = MutableLiveData(isVisible)
-    fun observeState(): LiveData<Boolean> = stateLiveData
+    private val _stateLiveData = MutableLiveData(isVisible)
+    val stateLiveData: LiveData<Boolean> = _stateLiveData
 }

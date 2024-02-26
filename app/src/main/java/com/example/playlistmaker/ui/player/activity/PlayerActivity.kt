@@ -29,7 +29,7 @@ class PlayerActivity : AppCompatActivity() {
         val view = binding.root
         setContentView(view)
 
-        viewModel.getPlayerStateLiveData().observe(this){state ->
+        viewModel.playerStateLiveData.observe(this){state ->
             render(state)
         }
 
@@ -119,7 +119,7 @@ class PlayerActivity : AppCompatActivity() {
             override fun run() {
                 if (newPlayerState == PlayerState.PLAYING) {
                     binding.playTime.text = viewModel.getTimer()
-                    handler.postDelayed(this, TIMER_DELAY)
+                    handler.postDelayed(this, TIMER_DELAY_MILLIS)
                 } else {
                     handler.removeCallbacks(this)
                 }
@@ -128,7 +128,7 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     companion object {
-        private const val TIMER_DELAY = 500L
+        private const val TIMER_DELAY_MILLIS = 500L
     }
 
 }

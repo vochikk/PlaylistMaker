@@ -11,12 +11,12 @@ class SettingsViewModel(
     private val settingsInteractor: SettingsInteractor
 ): ViewModel() {
 
-    private var themeLiveData = MutableLiveData(settingsInteractor.getThemeSettings())
-    fun getLiveData(): LiveData<Boolean> = themeLiveData
+    private val _themeLiveData = MutableLiveData(settingsInteractor.getThemeSettings())
+    val themeLiveData: LiveData<Boolean> = _themeLiveData
 
     fun updateThemeSettings(isChecked: Boolean) {
         settingsInteractor.updateThemeSettings(isChecked)
-        themeLiveData.value = isChecked
+        _themeLiveData.value = isChecked
     }
 
     fun shareApp() {

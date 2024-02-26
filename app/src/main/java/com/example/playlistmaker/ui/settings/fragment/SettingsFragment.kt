@@ -27,18 +27,17 @@ class SettingsFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.buttonShare.setOnClickListener{ viewModel.shareApp() }
-
-        binding.buttonSupport.setOnClickListener{ viewModel.openSupport() }
-
-        binding.buttonTerms.setOnClickListener{ viewModel.openTerms() }
-
-        viewModel.getLiveData().observe(viewLifecycleOwner){state ->
-            binding.themeSwitcher.isChecked = state
+        with(binding) {
+            buttonShare.setOnClickListener{ viewModel.shareApp() }
+            buttonSupport.setOnClickListener{ viewModel.openSupport() }
+            buttonTerms.setOnClickListener{ viewModel.openTerms() }
+            themeSwitcher.setOnCheckedChangeListener { _, checked ->
+                viewModel.updateThemeSettings(checked)
+            }
         }
 
-        binding.themeSwitcher.setOnCheckedChangeListener { _, checked ->
-            viewModel.updateThemeSettings(checked)
+        viewModel.themeLiveData.observe(viewLifecycleOwner){state ->
+            binding.themeSwitcher.isChecked = state
         }
     }
 
