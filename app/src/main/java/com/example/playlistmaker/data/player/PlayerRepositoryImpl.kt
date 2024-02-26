@@ -9,7 +9,7 @@ import com.example.playlistmaker.domain.player.models.Track
 import java.util.Locale
 
 class PlayerRepositoryImpl () : PlayerRepository, Player {
-    private val mediaPlayer = MediaPlayer()
+    private lateinit var mediaPlayer: MediaPlayer
     private var listener : OnStateChangeListener? = null
 
     override fun setListener(onStateChangeListrner: OnStateChangeListener) {
@@ -17,6 +17,7 @@ class PlayerRepositoryImpl () : PlayerRepository, Player {
     }
 
     override fun prepare(track: Track){
+        mediaPlayer = MediaPlayer()
         mediaPlayer.setDataSource(track.previewUrl)
         mediaPlayer.prepare()
 

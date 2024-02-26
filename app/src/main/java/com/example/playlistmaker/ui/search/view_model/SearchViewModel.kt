@@ -1,6 +1,5 @@
 package com.example.playlistmaker.ui.search.view_model
 
-import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
@@ -31,8 +30,6 @@ class SearchViewModel(
             return
         }
 
-        searchStateLiveData.postValue(SearchState.isLoading)
-
         this.latestSearchText = changedText
         handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
 
@@ -47,20 +44,25 @@ class SearchViewModel(
     }
 
     fun searchRequest (expression: String) {
-        tracksInteractor.searchTracks(expression,
-            consumer = object : TracksInteractor.TracksConsumer{
-                override fun consume(searchTracks: List<Track>?) {
-                    if (searchTracks == null) {
-                        searchStateLiveData.postValue(SearchState.Error)
-                    } else {
-                        if (searchTracks!!.isNotEmpty()) {
-                            searchStateLiveData.postValue(SearchState.Content(searchTracks))
+        if (expression.isNotEmpty()) {
+
+            searchStateLiveData.postValue(SearchState.isLoading)
+
+            tracksInteractor.searchTracks(expression,
+                consumer = object : TracksInteractor.TracksConsumer {
+                    override fun consume(searchTracks: List<Track>?) {
+                        if (searchTracks == null) {
+                            searchStateLiveData.postValue(SearchState.Error)
                         } else {
-                            searchStateLiveData.postValue(SearchState.NonFound)
+                            if (searchTracks!!.isNotEmpty()) {
+                                searchStateLiveData.postValue(SearchState.Content(searchTracks))
+                            } else {
+                                searchStateLiveData.postValue(SearchState.NonFound)
+                            }
                         }
                     }
-                }
-            })
+                })
+        } else searchStateLiveData.postValue(SearchState.HistoryView)
     }
 
     fun getTracksList(): List<Track> {

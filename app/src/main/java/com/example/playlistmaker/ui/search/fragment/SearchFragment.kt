@@ -1,33 +1,36 @@
-package com.example.playlistmaker.ui.search.activity
+package com.example.playlistmaker.ui.search.fragment
 
 import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.core.view.isVisible
-import androidx.lifecycle.ViewModelProvider
-import com.example.playlistmaker.ui.player.activity.PlayerActivity
+import androidx.fragment.app.Fragment
 import com.example.playlistmaker.R
-import com.example.playlistmaker.databinding.ActivitySearchBinding
+import com.example.playlistmaker.databinding.FragmentSearchBinding
 import com.example.playlistmaker.domain.player.models.Track
-import com.example.playlistmaker.ui.search.state.StatusVisability
+import com.example.playlistmaker.ui.player.activity.PlayerActivity
+import com.example.playlistmaker.ui.search.activity.TrackAdapter
 import com.example.playlistmaker.ui.search.state.SearchState
+import com.example.playlistmaker.ui.search.state.StatusVisability
 import com.example.playlistmaker.ui.search.view_model.SearchViewModel
 import com.google.gson.Gson
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-const val TRACK_KEY = "track_key"
+class SearchFragment: Fragment() {
 
-class SearchActivity : AppCompatActivity() {
+    private var _binding: FragmentSearchBinding? = null
+    private val binding get(): FragmentSearchBinding = _binding!!
+    private lateinit var textWatcher: TextWatcher
+
     private var textEditText = ""
-    private lateinit var binding: ActivitySearchBinding
-
     private var isClickAllowed = true
     lateinit var tracks: List<Track>
     private val adapter = TrackAdapter()
@@ -35,15 +38,19 @@ class SearchActivity : AppCompatActivity() {
     private val handler = Handler (Looper.getMainLooper())
     private val viewModel by viewModel<SearchViewModel>()
 
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentSearchBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivitySearchBinding.inflate(layoutInflater)
-        val view = binding.root
-        setContentView(view)
-
-        viewModel.getSearchStateLiveData().observe(this) {state ->
+        viewModel.getSearchStateLiveData().observe(viewLifecycleOwner) {state ->
             render(state)
         }
 
@@ -52,9 +59,6 @@ class SearchActivity : AppCompatActivity() {
 
         showViewOnScreen(StatusVisability.HISTORY_VISIBLE)
 
-        binding.buttonBack.setOnClickListener {
-            finish()
-        }
 
         binding.buttonClear.setOnClickListener {
             clearInputEditText(it)
@@ -70,12 +74,12 @@ class SearchActivity : AppCompatActivity() {
             viewButtonRemove()
         }
 
-        val textWatcher = object : TextWatcher {
+        textWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 viewModel.searchDebounce(
-                    changedText = s?.toString() ?: ""
+                    s?.toString() ?: ""
                 )
                 binding.buttonClear.visibility = clearButtonVisibility(s)
                 textEditText = binding.inputEditText.text.toString()
@@ -88,7 +92,7 @@ class SearchActivity : AppCompatActivity() {
             override fun afterTextChanged(s: Editable?) {}
         }
 
-        binding.inputEditText.addTextChangedListener(textWatcher)
+        textWatcher?.let { binding.inputEditText.addTextChangedListener(it) }
 
 
         adapter.tracks = tracks as ArrayList<Track>
@@ -122,19 +126,12 @@ class SearchActivity : AppCompatActivity() {
             updateAdapterAfterClear(emptyList())
             viewButtonRemove()
         }
-
-
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putString(TEXT_KEY, textEditText)
-    }
-
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
-        textEditText = savedInstanceState.getString(TEXT_KEY, "")
-        binding.inputEditText.setText(textEditText)
+    override fun onDestroy() {
+        super.onDestroy()
+        textWatcher?.let { binding.inputEditText.removeTextChangedListener(it) }
+        _binding = null
     }
 
     private fun clearButtonVisibility(s: CharSequence?): Int {
@@ -146,7 +143,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun View.hideKeyboard () {
-        val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+        val inputMethodManager = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager?.hideSoftInputFromWindow(windowToken, 0)
         showViewOnScreen(StatusVisability.HISTORY_VISIBLE)
     }
@@ -159,6 +156,11 @@ class SearchActivity : AppCompatActivity() {
             is SearchState.Content -> {
                 showViewOnScreen(StatusVisability.SEARCH_VISIBLE)
                 updateAdapterAfterClear(state.data)
+            }
+            is SearchState.HistoryView -> {
+                showViewOnScreen(StatusVisability.HISTORY_VISIBLE)
+                updateAdapterAfterClear(viewModel.getTracksList())
+                viewButtonRemove()
             }
         }
     }
@@ -229,7 +231,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun startPlayer (track: Track) {
-        val intent = Intent(this@SearchActivity, PlayerActivity::class.java)
+        val intent = Intent(requireContext(), PlayerActivity::class.java)
         val trackToSend = Gson().toJson(track)
         intent.putExtra(TRACK_KEY, trackToSend)
         startActivity(intent)
@@ -245,7 +247,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     companion object {
-        const val TEXT_KEY = "TEXT_KEY"
+        const val TRACK_KEY = "TRACK_KEY"
         const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 }

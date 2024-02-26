@@ -12,7 +12,7 @@ import com.example.playlistmaker.databinding.ActivityPlayerBinding
 import com.example.playlistmaker.domain.player.state.PlayerState
 import com.example.playlistmaker.domain.player.models.Track
 import com.example.playlistmaker.ui.player.view_model.PlayerViewModel
-import com.example.playlistmaker.ui.search.activity.TRACK_KEY
+import com.example.playlistmaker.ui.search.fragment.SearchFragment.Companion.TRACK_KEY
 import com.google.gson.Gson
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -40,7 +40,7 @@ class PlayerActivity : AppCompatActivity() {
         viewModel.prepare(track)
 
         binding.buttonBack.setOnClickListener {
-            finish()
+            this.onBackPressedDispatcher.onBackPressed()
         }
 
         binding.buttonPlay.setOnClickListener {
