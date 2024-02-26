@@ -14,6 +14,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:paddingVertical="@dimen/padding_8"
         android:paddingStart="@dimen/padding_16"
         android:paddingBottom="@dimen/padding_36"
         android:text="@string/settings"
