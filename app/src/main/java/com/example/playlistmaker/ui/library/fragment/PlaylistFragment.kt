@@ -40,7 +40,7 @@ class PlaylistFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        playlistViewModel.observeState().observe(viewLifecycleOwner){
+        playlistViewModel.stateLiveData.observe(viewLifecycleOwner){
             render()
         }
     }

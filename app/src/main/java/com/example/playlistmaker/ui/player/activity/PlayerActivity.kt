@@ -12,7 +12,7 @@ import com.example.playlistmaker.databinding.ActivityPlayerBinding
 import com.example.playlistmaker.domain.player.state.PlayerState
 import com.example.playlistmaker.domain.player.models.Track
 import com.example.playlistmaker.ui.player.view_model.PlayerViewModel
-import com.example.playlistmaker.ui.search.activity.TRACK_KEY
+import com.example.playlistmaker.ui.search.fragment.SearchFragment.Companion.TRACK_KEY
 import com.google.gson.Gson
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -29,7 +29,7 @@ class PlayerActivity : AppCompatActivity() {
         val view = binding.root
         setContentView(view)
 
-        viewModel.getPlayerStateLiveData().observe(this){state ->
+        viewModel.playerStateLiveData.observe(this){state ->
             render(state)
         }
 
@@ -40,7 +40,7 @@ class PlayerActivity : AppCompatActivity() {
         viewModel.prepare(track)
 
         binding.buttonBack.setOnClickListener {
-            finish()
+            this.onBackPressedDispatcher.onBackPressed()
         }
 
         binding.buttonPlay.setOnClickListener {
@@ -119,7 +119,7 @@ class PlayerActivity : AppCompatActivity() {
             override fun run() {
                 if (newPlayerState == PlayerState.PLAYING) {
                     binding.playTime.text = viewModel.getTimer()
-                    handler.postDelayed(this, TIMER_DELAY)
+                    handler.postDelayed(this, TIMER_DELAY_MILLIS)
                 } else {
                     handler.removeCallbacks(this)
                 }
@@ -128,7 +128,7 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     companion object {
-        private const val TIMER_DELAY = 500L
+        private const val TIMER_DELAY_MILLIS = 500L
     }
 
 }

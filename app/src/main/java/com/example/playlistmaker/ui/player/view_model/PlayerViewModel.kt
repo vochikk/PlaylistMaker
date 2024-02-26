@@ -12,14 +12,13 @@ class PlayerViewModel(
     private val playerInteractor: PlayerInteractor
     ): ViewModel() {
 
-    private val playerStateLiveDate = MutableLiveData<PlayerState>()
-
-    fun getPlayerStateLiveData(): LiveData<PlayerState> = playerStateLiveDate
+    private val _playerStateLiveDate = MutableLiveData<PlayerState>()
+    val playerStateLiveData: LiveData<PlayerState> = _playerStateLiveDate
 
     private fun onChange() {
         playerInteractor.setListener(object : OnStateChangeListener {
             override fun onChange(state: PlayerState) {
-                playerStateLiveDate.postValue(state)
+                _playerStateLiveDate.postValue(state)
             }
         })
     }

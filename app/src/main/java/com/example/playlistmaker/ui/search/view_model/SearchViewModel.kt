@@ -1,6 +1,5 @@
 package com.example.playlistmaker.ui.search.view_model
 
-import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
@@ -16,9 +15,8 @@ class SearchViewModel(
 ): ViewModel() {
 
     private val handler = Handler(Looper.getMainLooper())
-    private var searchStateLiveData = MutableLiveData<SearchState>()
-
-    fun getSearchStateLiveData(): LiveData<SearchState> = searchStateLiveData
+    private var _searchStateLiveData = MutableLiveData<SearchState>()
+    val searchStateLiveData: LiveData<SearchState> = _searchStateLiveData
 
     private var latestSearchText: String? = null
 
@@ -31,14 +29,12 @@ class SearchViewModel(
             return
         }
 
-        searchStateLiveData.postValue(SearchState.isLoading)
-
         this.latestSearchText = changedText
         handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
 
         val searchRunnable = Runnable { searchRequest(changedText) }
 
-        val postTime = SystemClock.uptimeMillis() + SEARCH_DEBOUNCE_DELAY
+        val postTime = SystemClock.uptimeMillis() + SEARCH_DEBOUNCE_DELAY_MILLIS
         handler.postAtTime(
             searchRunnable,
             SEARCH_REQUEST_TOKEN,
@@ -47,20 +43,25 @@ class SearchViewModel(
     }
 
     fun searchRequest (expression: String) {
-        tracksInteractor.searchTracks(expression,
-            consumer = object : TracksInteractor.TracksConsumer{
-                override fun consume(searchTracks: List<Track>?) {
-                    if (searchTracks == null) {
-                        searchStateLiveData.postValue(SearchState.Error)
-                    } else {
-                        if (searchTracks!!.isNotEmpty()) {
-                            searchStateLiveData.postValue(SearchState.Content(searchTracks))
+        if (expression.isNotEmpty()) {
+
+            _searchStateLiveData.postValue(SearchState.isLoading)
+
+            tracksInteractor.searchTracks(expression,
+                consumer = object : TracksInteractor.TracksConsumer {
+                    override fun consume(searchTracks: List<Track>?) {
+                        if (searchTracks == null) {
+                            _searchStateLiveData.postValue(SearchState.Error)
                         } else {
-                            searchStateLiveData.postValue(SearchState.NonFound)
+                            if (searchTracks!!.isNotEmpty()) {
+                                _searchStateLiveData.postValue(SearchState.Content(searchTracks))
+                            } else {
+                                _searchStateLiveData.postValue(SearchState.NonFound)
+                            }
                         }
                     }
-                }
-            })
+                })
+        } else _searchStateLiveData.postValue(SearchState.HistoryView)
     }
 
     fun getTracksList(): List<Track> {
@@ -76,7 +77,7 @@ class SearchViewModel(
     }
 
     companion object {
-        private const val SEARCH_DEBOUNCE_DELAY = 2000L
+        private const val SEARCH_DEBOUNCE_DELAY_MILLIS = 2000L
         private val SEARCH_REQUEST_TOKEN = Any()
     }
 }
