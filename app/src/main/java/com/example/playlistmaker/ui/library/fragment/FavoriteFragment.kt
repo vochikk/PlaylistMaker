@@ -22,7 +22,8 @@ class FavoriteFragment: Fragment() {
         }
     }
 
-    private lateinit var binding: FragmentFavoriteBinding
+    private var _binding: FragmentFavoriteBinding? = null
+    private val binding get(): FragmentFavoriteBinding = _binding!!
 
     private val favoriteViewModel: FavoriteViewModel by viewModel {
         parametersOf(requireArguments().getBoolean(FAVORITE))
@@ -32,8 +33,8 @@ class FavoriteFragment: Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        binding = FragmentFavoriteBinding.inflate(inflater, container, false)
+    ): View {
+        _binding = FragmentFavoriteBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -43,6 +44,11 @@ class FavoriteFragment: Fragment() {
         favoriteViewModel.observeState().observe(viewLifecycleOwner) {
             render()
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
     }
 
     private fun render() {

@@ -22,7 +22,8 @@ class PlaylistFragment: Fragment() {
         }
     }
 
-    private lateinit var binding: FragmentPlaylistBinding
+    private var _binding: FragmentPlaylistBinding? = null
+    private val binding get(): FragmentPlaylistBinding = _binding!!
 
     private val playlistViewModel: PlaylistViewModel by viewModel {
         parametersOf(requireArguments().getBoolean(LIBRARY))
@@ -32,15 +33,21 @@ class PlaylistFragment: Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        binding = FragmentPlaylistBinding.inflate(inflater, container, false)
+    ): View {
+        _binding = FragmentPlaylistBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        playlistViewModel.observeState().observe(viewLifecycleOwner){
+            render()
+        }
+    }
 
-        render()
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
     }
 
     private fun render() {
