@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.View
+import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
@@ -19,9 +20,8 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PlayerActivity : AppCompatActivity() {
     private lateinit var binding: ActivityPlayerBinding
-    private var handler = Handler(Looper.getMainLooper())
     private val viewModel by viewModel<PlayerViewModel>()
-    private var newPlayerState = PlayerState.DEFAULT
+    private var newPlayerState: PlayerState? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,11 +44,10 @@ class PlayerActivity : AppCompatActivity() {
         }
 
         binding.buttonPlay.setOnClickListener {
-            if (newPlayerState == PlayerState.PLAYING) {
-                viewModel.pause()
-            } else {
+            if (newPlayerState!!.isButtonPlay) {
                 viewModel.play()
-                startTimer()
+            } else {
+                viewModel.pause()
             }
         }
 
@@ -57,33 +56,16 @@ class PlayerActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         viewModel.pause()
-        handler.removeCallbacksAndMessages(null)
     }
 
     override fun onDestroy() {
         super.onDestroy()
         viewModel.realese()
-        handler.removeCallbacksAndMessages(null)
     }
 
     private fun render (state: PlayerState) {
-        when (state) {
-            PlayerState.DEFAULT -> {}
-            PlayerState.PREPARED -> {
-                binding.buttonPlay.setImageResource(R.drawable.ic_button_play)
-            }
-            PlayerState.PLAYING -> {
-                binding.buttonPlay.setImageResource(R.drawable.ic_button_pause)
-            }
-            PlayerState.PAUSING -> {
-                binding.buttonPlay.setImageResource(R.drawable.ic_button_play)
-            }
-            PlayerState.ENDING -> {
-                handler.removeCallbacksAndMessages(null)
-                binding.playTime.text = "00:00"
-                binding.buttonPlay.setImageResource(R.drawable.ic_button_play)
-            }
-        }
+        setButton(state.isButtonPlay)
+        setTimerText(state.progress)
         newPlayerState = state
     }
 
@@ -110,25 +92,15 @@ class PlayerActivity : AppCompatActivity() {
         }
     }
 
-    private fun startTimer () {
-        handler.post(updateTimerTask())
-    }
-
-    private fun updateTimerTask () : Runnable {
-        return object : Runnable {
-            override fun run() {
-                if (newPlayerState == PlayerState.PLAYING) {
-                    binding.playTime.text = viewModel.getTimer()
-                    handler.postDelayed(this, TIMER_DELAY_MILLIS)
-                } else {
-                    handler.removeCallbacks(this)
-                }
-            }
+    private fun setButton (isButtonPlay: Boolean) {
+        if (isButtonPlay) {
+            binding.buttonPlay.setImageResource(R.drawable.ic_button_play)
+        } else {
+            binding.buttonPlay.setImageResource(R.drawable.ic_button_pause)
         }
     }
 
-    companion object {
-        private const val TIMER_DELAY_MILLIS = 500L
+    private fun setTimerText (progress: String) {
+        binding.playTime.text = progress
     }
-
 }

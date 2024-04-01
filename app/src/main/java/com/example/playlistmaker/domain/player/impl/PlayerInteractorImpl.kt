@@ -26,9 +26,4 @@ class PlayerInteractorImpl (private val playerRepository: PlayerRepository) : Pl
     override fun realese() {
         playerRepository.realese()
     }
-
-    override fun getTimer(): String {
-        return playerRepository.getTimer()
-    }
-
 }

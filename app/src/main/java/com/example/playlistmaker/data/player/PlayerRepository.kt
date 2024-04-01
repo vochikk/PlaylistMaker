@@ -8,5 +8,4 @@ interface PlayerRepository : Player {
     fun play()
     fun pause()
     fun realese()
-    fun getTimer() : String
 }
