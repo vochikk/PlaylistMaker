@@ -15,10 +15,10 @@ import java.util.Locale
 class PlayerRepositoryImpl () : PlayerRepository, Player {
     private var mediaPlayer: MediaPlayer? = null
     private var listener : OnStateChangeListener? = null
-    private var timerJob: Job? = null
+    private val dataFormat by lazy { SimpleDateFormat("mm:ss", Locale.getDefault()) }
 
-    override fun setListener(onStateChangeListrner: OnStateChangeListener) {
-        listener = onStateChangeListrner
+    override fun setListener(onStateChangeListener: OnStateChangeListener) {
+        listener = onStateChangeListener
     }
 
     override fun prepare(track: Track){
@@ -31,43 +31,33 @@ class PlayerRepositoryImpl () : PlayerRepository, Player {
         }
 
         mediaPlayer?.setOnCompletionListener {
-            listener?.onChange(PlayerState.ENDING())
+            listener?.onChange(PlayerState.PREPARED())
         }
     }
 
     override fun play() {
         mediaPlayer?.start()
         listener?.onChange(PlayerState.PLAYING(getTimer()))
-        startTimer()
     }
 
     override fun pause() {
         mediaPlayer?.pause()
-        timerJob?.cancel()
         listener?.onChange(PlayerState.PAUSING(getTimer()))
     }
 
     override fun realese() {
         mediaPlayer?.release()
-        timerJob?.cancel()
         listener?.onChange(PlayerState.ENDING())
+        listener = null
+
     }
 
-    private fun getTimer() : String {
-        return SimpleDateFormat("mm:ss", Locale.getDefault()).format(mediaPlayer?.currentPosition)
+    override fun isPlaying(): Boolean {
+        return mediaPlayer?.isPlaying ?: false
     }
 
-    private fun startTimer() {
-        timerJob = GlobalScope.launch {
-            while (mediaPlayer!!.isPlaying) {
-                delay(TIMER_DELAY_MILLIS)
-                listener?.onChange(PlayerState.PLAYING(getTimer()))
-            }
-        }
-    }
-
-    companion object {
-        private const val TIMER_DELAY_MILLIS = 300L
+    override fun getTimer() : String {
+        return dataFormat.format(mediaPlayer?.currentPosition)
     }
 
 }

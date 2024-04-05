@@ -13,4 +13,5 @@ interface TracksInteractor {
     fun saveTrack(track: Track)
 
     fun clearTracksList()
+
 }
