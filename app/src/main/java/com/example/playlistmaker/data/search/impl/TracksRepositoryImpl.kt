@@ -7,6 +7,8 @@ import com.example.playlistmaker.data.search.network.NetworkClient
 import com.example.playlistmaker.data.search.TracksRepository
 import com.example.playlistmaker.data.storage.StorageClient
 import com.example.playlistmaker.domain.player.models.Track
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 const val MAX_COUNT = 10
 
@@ -14,19 +16,14 @@ class TracksRepositoryImpl(
     private val networkClient: NetworkClient,
     private val storageClient: StorageClient): TracksRepository {
 
-    override fun searchTracks(expression: String): List<Track>? {
+    override fun searchTracks(expression: String): Flow<List<Track>?> = flow {
         val response = networkClient.doRequest(TracksSearchRequest(expression))
-        return when {
-            (response.resultCode == 200) -> {
-                mapListTrackDto((response as TracksSearchResponse).results)
+        when (response.resultCode) {
+            200 -> {
+                emit(mapListTrackDto((response as TracksSearchResponse).results))
             }
-
-            response.resultCode == 0 -> {
-                return null
-            }
-            else -> {
-                emptyList()
-            }
+            400 -> {emit(emptyList())}
+            else -> {emit(null)}
         }
     }
 

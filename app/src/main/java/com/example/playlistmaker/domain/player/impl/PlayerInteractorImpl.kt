@@ -27,8 +27,11 @@ class PlayerInteractorImpl (private val playerRepository: PlayerRepository) : Pl
         playerRepository.realese()
     }
 
+    override fun isPlaying(): Boolean {
+        return playerRepository.isPlaying()
+    }
+
     override fun getTimer(): String {
         return playerRepository.getTimer()
     }
-
 }

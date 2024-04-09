@@ -6,14 +6,19 @@ import com.example.playlistmaker.domain.player.OnStateChangeListener
 import com.example.playlistmaker.domain.player.Player
 import com.example.playlistmaker.domain.player.state.PlayerState
 import com.example.playlistmaker.domain.player.models.Track
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.util.Locale
 
 class PlayerRepositoryImpl () : PlayerRepository, Player {
     private var mediaPlayer: MediaPlayer? = null
     private var listener : OnStateChangeListener? = null
+    private val dataFormat by lazy { SimpleDateFormat("mm:ss", Locale.getDefault()) }
 
-    override fun setListener(onStateChangeListrner: OnStateChangeListener) {
-        listener = onStateChangeListrner
+    override fun setListener(onStateChangeListener: OnStateChangeListener) {
+        listener = onStateChangeListener
     }
 
     override fun prepare(track: Track){
@@ -22,32 +27,37 @@ class PlayerRepositoryImpl () : PlayerRepository, Player {
         mediaPlayer?.prepare()
 
         mediaPlayer?.setOnPreparedListener {
-            listener?.onChange(PlayerState.PREPARED)
+            listener?.onChange(PlayerState.PREPARED())
         }
 
         mediaPlayer?.setOnCompletionListener {
-            listener?.onChange(PlayerState.ENDING)
+            listener?.onChange(PlayerState.PREPARED())
         }
     }
 
     override fun play() {
         mediaPlayer?.start()
-        listener?.onChange(PlayerState.PLAYING)
+        listener?.onChange(PlayerState.PLAYING(getTimer()))
     }
 
     override fun pause() {
         mediaPlayer?.pause()
-        listener?.onChange(PlayerState.PAUSING)
+        listener?.onChange(PlayerState.PAUSING(getTimer()))
     }
 
     override fun realese() {
         mediaPlayer?.release()
-        listener?.onChange(PlayerState.ENDING)
+        listener?.onChange(PlayerState.ENDING())
+        listener = null
+
     }
 
+    override fun isPlaying(): Boolean {
+        return mediaPlayer?.isPlaying ?: false
+    }
 
     override fun getTimer() : String {
-        return SimpleDateFormat("mm:ss", Locale.getDefault()).format(mediaPlayer?.currentPosition)
+        return dataFormat.format(mediaPlayer?.currentPosition)
     }
 
 }

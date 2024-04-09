@@ -13,6 +13,7 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentSearchBinding
 import com.example.playlistmaker.domain.player.models.Track
@@ -22,6 +23,8 @@ import com.example.playlistmaker.ui.search.state.SearchState
 import com.example.playlistmaker.ui.search.state.StatusVisability
 import com.example.playlistmaker.ui.search.view_model.SearchViewModel
 import com.google.gson.Gson
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchFragment: Fragment() {
@@ -32,10 +35,9 @@ class SearchFragment: Fragment() {
 
     private var textEditText = ""
     private var isClickAllowed = true
-    lateinit var tracks: List<Track>
+    private lateinit var tracks: List<Track>
     private val adapter = TrackAdapter()
     private val historyAdapter = TrackAdapter()
-    private val handler = Handler (Looper.getMainLooper())
     private val viewModel by viewModel<SearchViewModel>()
 
     override fun onCreateView(
@@ -171,6 +173,7 @@ class SearchFragment: Fragment() {
                 adapter.notifyDataSetChanged()
                 binding.rvSearchList.visibility = View.GONE
                 binding.historySearch.visibility = View.GONE
+                binding.progressBar.visibility = View.GONE
                 binding.placeholder.visibility = View.VISIBLE
                 binding.placeholderImage.setImageResource(R.drawable.ic_nothing_found)
                 binding.placeholderText.setText(R.string.nothing_found)
@@ -251,7 +254,10 @@ class SearchFragment: Fragment() {
         val current = isClickAllowed
         if (isClickAllowed) {
             isClickAllowed = false
-            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY_MILLIS)
+            viewLifecycleOwner.lifecycleScope.launch {
+                delay(CLICK_DEBOUNCE_DELAY_MILLIS)
+                isClickAllowed = true
+            }
         }
         return current
     }
