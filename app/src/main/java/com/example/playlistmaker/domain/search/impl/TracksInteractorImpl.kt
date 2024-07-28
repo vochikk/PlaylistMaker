@@ -29,4 +29,8 @@ class TracksInteractorImpl (private val repository: TracksRepository) : TracksIn
     override fun clearTracksList() {
         repository.clearTracksList()
     }
+
+    override fun updateFavoriteTag(track: Track): Track {
+        return repository.updateFavoriteTag(track)
+    }
 }

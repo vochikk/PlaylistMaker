@@ -1,24 +1,22 @@
 package com.example.playlistmaker.ui.search.fragment
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentSearchBinding
 import com.example.playlistmaker.domain.player.models.Track
-import com.example.playlistmaker.ui.player.activity.PlayerActivity
-import com.example.playlistmaker.ui.search.activity.TrackAdapter
+import com.example.playlistmaker.ui.search.view_holder.TrackAdapter
 import com.example.playlistmaker.ui.search.state.SearchState
 import com.example.playlistmaker.ui.search.state.StatusVisability
 import com.example.playlistmaker.ui.search.view_model.SearchViewModel
@@ -101,7 +99,7 @@ class SearchFragment: Fragment() {
         binding.rvSearchList.adapter = adapter
         adapter.setOnClickListener(object : TrackAdapter.OnClickListener {
             override fun onClick(track: Track) {
-                viewModel.saveTrack(track)
+                viewModel.updateFavoriteTag(track)
                 if (clickDebounce()) {
                     startPlayer(track)
                 }
@@ -112,7 +110,7 @@ class SearchFragment: Fragment() {
         binding.rvHistorySearch.adapter = historyAdapter
         historyAdapter.setOnClickListener(object : TrackAdapter.OnClickListener {
             override fun onClick(track: Track) {
-                viewModel.getTracksList()
+                viewModel.updateFavoriteTag(track)
                 if (clickDebounce()) {
                     startPlayer(track)
                 }
@@ -128,6 +126,11 @@ class SearchFragment: Fragment() {
             updateAdapterAfterClear(emptyList())
             setViewElement()
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        isClickAllowed = true
     }
 
     override fun onDestroy() {
@@ -244,10 +247,10 @@ class SearchFragment: Fragment() {
     }
 
     private fun startPlayer (track: Track) {
-        val intent = Intent(requireContext(), PlayerActivity::class.java)
         val trackToSend = Gson().toJson(track)
-        intent.putExtra(TRACK_KEY, trackToSend)
-        startActivity(intent)
+        findNavController().navigate(
+            R.id.action_searchFragment_to_playerFragment, bundleOf(TRACK_KEY to trackToSend)
+        )
     }
 
     private fun clickDebounce() : Boolean {

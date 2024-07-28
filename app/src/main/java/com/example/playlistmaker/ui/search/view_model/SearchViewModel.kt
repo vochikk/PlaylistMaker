@@ -6,11 +6,15 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.playlistmaker.di.viewModelModule
 import com.example.playlistmaker.domain.player.models.Track
 import com.example.playlistmaker.domain.search.TracksInteractor
 import com.example.playlistmaker.ui.search.state.SearchState
 import com.example.playlistmaker.utils.debounce
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 
 class SearchViewModel(
@@ -40,7 +44,7 @@ class SearchViewModel(
 
             _searchStateLiveData.postValue(SearchState.isLoading)
 
-            viewModelScope.launch {
+            viewModelScope.launch(Dispatchers.IO) {
                 tracksInteractor
                     .searchTracks(expression)
                     .collect{tracks ->
@@ -50,15 +54,26 @@ class SearchViewModel(
     }
 
     fun getTracksList(): List<Track> {
-        return tracksInteractor.getTracksList()
+        val trackList = tracksInteractor.getTracksList()
+        trackList.forEach{
+            updateFavoriteTag(it)
+        }
+        return trackList
     }
 
-    fun saveTrack(track: Track) {
-        tracksInteractor.saveTrack(track)
+    private fun saveTrack(track: Track) {
+        updateFavoriteTag(track)
     }
 
     fun clearTracksList() {
         tracksInteractor.clearTracksList()
+    }
+
+    fun updateFavoriteTag(track: Track) {
+        viewModelScope.launch(Dispatchers.IO) {
+            tracksInteractor.saveTrack(tracksInteractor.updateFavoriteTag(track))
+        }
+
     }
 
     private fun processResult(searchTracks: List<Track>?) {

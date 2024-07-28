@@ -1,5 +1,9 @@
 package com.example.playlistmaker.di
 
+import com.example.playlistmaker.data.db.FavoriteRepository
+import com.example.playlistmaker.data.db.converter.TrackDbConverter
+import com.example.playlistmaker.data.db.converter.TrackDtoConverter
+import com.example.playlistmaker.data.db.impl.FavoriteRepositoryImpl
 import com.example.playlistmaker.data.player.PlayerRepository
 import com.example.playlistmaker.data.player.PlayerRepositoryImpl
 import com.example.playlistmaker.data.search.TracksRepository
@@ -16,10 +20,18 @@ val repositoryModule = module {
     }
 
     single<TracksRepository> {
-        TracksRepositoryImpl(get(), get())
+        TracksRepositoryImpl(get(), get(), get(), get())
     }
 
     single<SettingsRepository> {
         SettingsRepositoryImpl(androidContext())
     }
+
+    single<FavoriteRepository> {
+        FavoriteRepositoryImpl(get(), get())
+    }
+
+    factory { TrackDbConverter() }
+
+    factory { TrackDtoConverter() }
 }

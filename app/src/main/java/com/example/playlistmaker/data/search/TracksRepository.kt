@@ -13,4 +13,6 @@ interface TracksRepository {
     fun saveTrack (track: Track)
 
     fun clearTracksList ()
+
+    fun updateFavoriteTag(track: Track) : Track
 }
