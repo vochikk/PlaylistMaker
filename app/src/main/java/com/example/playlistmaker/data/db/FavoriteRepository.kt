@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface FavoriteRepository {
 
-    fun getFavoriteTacks () : List<TrackDto>
+    fun getFavoriteTacks(): Flow<List<TrackDto>>
 
     fun insertTrack(trackDto: TrackDto)
 

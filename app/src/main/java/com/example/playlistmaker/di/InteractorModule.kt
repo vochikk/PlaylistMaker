@@ -32,7 +32,7 @@ val interactorModule = module {
         SharingInteractorImpl(get())
     }
 
-    single<FavoriteInteractor> {
+    factory<FavoriteInteractor> {
         FavoriteInteractorImpl(get(), get())
     }
 }

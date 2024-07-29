@@ -25,7 +25,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class SearchFragment: Fragment() {
+class SearchFragment : Fragment() {
 
     private var _binding: FragmentSearchBinding? = null
     private val binding get(): FragmentSearchBinding = _binding!!
@@ -50,7 +50,7 @@ class SearchFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.searchStateLiveData.observe(viewLifecycleOwner) {state ->
+        viewModel.searchStateLiveData.observe(viewLifecycleOwner) { state ->
             render(state)
         }
 
@@ -68,8 +68,9 @@ class SearchFragment: Fragment() {
         }
 
         binding.inputEditText.setOnFocusChangeListener { v, hasFocus ->
-            binding.historySearch.visibility = if (binding.root.hasFocus() && binding.inputEditText.text?.isEmpty() == true)
-                View.VISIBLE else View.GONE
+            binding.historySearch.visibility =
+                if (binding.root.hasFocus() && binding.inputEditText.text?.isEmpty() == true)
+                    View.VISIBLE else View.GONE
             binding.placeholder.visibility = View.GONE
             setViewElement()
         }
@@ -83,8 +84,9 @@ class SearchFragment: Fragment() {
                 )
                 binding.buttonClear.visibility = clearButtonVisibility(s)
                 textEditText = binding.inputEditText.text.toString()
-                binding.historySearch.visibility = if (binding.inputEditText.hasFocus() && s?.isEmpty() == true)
-                    View.VISIBLE else View.GONE
+                binding.historySearch.visibility =
+                    if (binding.inputEditText.hasFocus() && s?.isEmpty() == true)
+                        View.VISIBLE else View.GONE
                 binding.placeholder.visibility = View.GONE
                 setViewElement()
             }
@@ -147,8 +149,9 @@ class SearchFragment: Fragment() {
         }
     }
 
-    private fun View.hideKeyboard () {
-        val inputMethodManager = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    private fun View.hideKeyboard() {
+        val inputMethodManager =
+            requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager?.hideSoftInputFromWindow(windowToken, 0)
         showViewOnScreen(StatusVisability.HISTORY_VISIBLE)
     }
@@ -162,6 +165,7 @@ class SearchFragment: Fragment() {
                 showViewOnScreen(StatusVisability.SEARCH_VISIBLE)
                 updateAdapterAfterClear(state.data)
             }
+
             is SearchState.HistoryView -> {
                 showViewOnScreen(StatusVisability.HISTORY_VISIBLE)
                 updateAdapterAfterClear(viewModel.getTracksList())
@@ -170,7 +174,7 @@ class SearchFragment: Fragment() {
         }
     }
 
-    private fun showViewOnScreen (status: StatusVisability) {
+    private fun showViewOnScreen(status: StatusVisability) {
         when (status) {
             StatusVisability.NON_FOUND_VISIBLE -> {
                 adapter.notifyDataSetChanged()
@@ -183,6 +187,7 @@ class SearchFragment: Fragment() {
                 binding.buttonUpdate.visibility = View.GONE
 
             }
+
             StatusVisability.ERROR_VISIBLE -> {
                 adapter.notifyDataSetChanged()
                 binding.rvSearchList.visibility = View.GONE
@@ -193,6 +198,7 @@ class SearchFragment: Fragment() {
                 binding.placeholderText.setText(R.string.failure_text)
                 binding.buttonUpdate.visibility = View.VISIBLE
             }
+
             StatusVisability.SEARCH_VISIBLE -> {
                 binding.placeholder.visibility = View.GONE
                 binding.historySearch.visibility = View.GONE
@@ -200,12 +206,14 @@ class SearchFragment: Fragment() {
                 binding.rvSearchList.visibility = View.VISIBLE
                 adapter.notifyDataSetChanged()
             }
+
             StatusVisability.HISTORY_VISIBLE -> {
                 binding.placeholder.visibility = View.GONE
                 binding.historySearch.visibility = View.VISIBLE
                 binding.rvSearchList.visibility = View.GONE
                 adapter.notifyDataSetChanged()
             }
+
             StatusVisability.SHOW_LOAD -> {
                 binding.placeholder.visibility = View.GONE
                 binding.historySearch.visibility = View.GONE
@@ -221,18 +229,20 @@ class SearchFragment: Fragment() {
         viewButtonRemove()
     }
 
-    private fun viewButtonRemove () {
-        binding.buttonRemove.visibility = if (viewModel.getTracksList().isNotEmpty() && binding.historySearch.isVisible)
-            View.VISIBLE else View.GONE
+    private fun viewButtonRemove() {
+        binding.buttonRemove.visibility =
+            if (viewModel.getTracksList().isNotEmpty() && binding.historySearch.isVisible)
+                View.VISIBLE else View.GONE
 
     }
 
     private fun viewTitleHistory() {
-        binding.titleHistory.visibility = if (viewModel.getTracksList().isNotEmpty() && binding.historySearch.isVisible)
-            View.VISIBLE else View.GONE
+        binding.titleHistory.visibility =
+            if (viewModel.getTracksList().isNotEmpty() && binding.historySearch.isVisible)
+                View.VISIBLE else View.GONE
     }
 
-    private fun updateAdapterAfterClear (trackList: List<Track>) {
+    private fun updateAdapterAfterClear(trackList: List<Track>) {
         adapter.tracks.clear()
         adapter.tracks.addAll(trackList)
         adapter.notifyDataSetChanged()
@@ -241,19 +251,19 @@ class SearchFragment: Fragment() {
         historyAdapter.notifyDataSetChanged()
     }
 
-    private fun clearInputEditText (view: View) {
+    private fun clearInputEditText(view: View) {
         binding.inputEditText.setText("")
         view.hideKeyboard()
     }
 
-    private fun startPlayer (track: Track) {
+    private fun startPlayer(track: Track) {
         val trackToSend = Gson().toJson(track)
         findNavController().navigate(
             R.id.action_searchFragment_to_playerFragment, bundleOf(TRACK_KEY to trackToSend)
         )
     }
 
-    private fun clickDebounce() : Boolean {
+    private fun clickDebounce(): Boolean {
         val current = isClickAllowed
         if (isClickAllowed) {
             isClickAllowed = false

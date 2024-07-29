@@ -5,16 +5,18 @@ import com.example.playlistmaker.data.db.FavoriteRepository
 import com.example.playlistmaker.data.db.converter.TrackDbConverter
 import com.example.playlistmaker.data.db.entity.TrackEntity
 import com.example.playlistmaker.data.search.dto.TrackDto
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 class FavoriteRepositoryImpl (
     private val appDatabase: AppDatabase,
     private val trackDbConverter: TrackDbConverter
         ) : FavoriteRepository {
 
-    override fun getFavoriteTacks(): List<TrackDto> {
+    override fun getFavoriteTacks(): Flow<List<TrackDto>> = flow {
 
         val tracks = appDatabase.trackDao().getListTrack().sortedWith(compareBy{it.timestamp})
-        return convertFromTrackEntity(tracks).reversed()
+        emit(convertFromTrackEntity(tracks).reversed())
     }
 
     override fun insertTrack(trackDto: TrackDto) {

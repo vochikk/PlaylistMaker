@@ -14,27 +14,27 @@ import kotlinx.coroutines.launch
 
 class FavoriteViewModel(
     private val interactor: FavoriteInteractor
-): ViewModel() {
+) : ViewModel() {
 
     private val _stateLiveData = MutableLiveData<List<Track>>()
     val stateLiveData: LiveData<List<Track>> = _stateLiveData
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            getContent().collect{tracks ->
+            getContent().collect { tracks ->
                 _stateLiveData.postValue(tracks)
             }
         }
     }
 
 
-    private fun getContent(): Flow<List<Track>> = flow {
-        emit(interactor.getFavoriteTacks())
+    private fun getContent(): Flow<List<Track>> {
+        return interactor.getFavoriteTacks()
     }
 
     fun updateList() {
         viewModelScope.launch(Dispatchers.IO) {
-            getContent().collect{tracks ->
+            getContent().collect { tracks ->
                 _stateLiveData.postValue(tracks)
             }
         }

@@ -17,7 +17,8 @@ class TracksRepositoryImpl(
     private val networkClient: NetworkClient,
     private val storageClient: StorageClient,
     private val converter: TrackDtoConverter,
-    private val appDatabase: AppDatabase): TracksRepository {
+    private val appDatabase: AppDatabase
+) : TracksRepository {
 
     override fun searchTracks(expression: String): Flow<List<Track>?> = flow {
         val response = networkClient.doRequest(TracksSearchRequest(expression))
@@ -25,15 +26,21 @@ class TracksRepositoryImpl(
             200 -> {
                 val list = converter.mapToTrack((response as TracksSearchResponse).results)
                 val idList = appDatabase.trackDao().getIdListTrack()
-                list.map {track ->
+                list.map { track ->
                     idList.forEach {
                         if (it == track.trackId) track.isFavorite = true
                     }
                 }
                 emit(list)
             }
-            400 -> {emit(emptyList())}
-            else -> {emit(null)}
+
+            400 -> {
+                emit(emptyList())
+            }
+
+            else -> {
+                emit(null)
+            }
         }
     }
 
@@ -41,7 +48,7 @@ class TracksRepositoryImpl(
         return converter.mapToTrack(storageClient.get())
     }
 
-    override fun saveTracksList (trackList: List<Track>) {
+    override fun saveTracksList(trackList: List<Track>) {
         val list = converter.mapToTrackDto(trackList)
         storageClient.save(list)
     }
@@ -53,7 +60,7 @@ class TracksRepositoryImpl(
             list.isEmpty() -> list.add(0, track)
             list.size == MAX_COUNT -> {
                 var check = false
-                list.forEach{
+                list.forEach {
                     if (track.trackId == it.trackId) {
                         check = true
                     }
@@ -65,6 +72,7 @@ class TracksRepositoryImpl(
                 }
                 list.add(0, track)
             }
+
             list.size < MAX_COUNT -> {
                 list.remove(track)
                 list.add(0, track)
@@ -81,14 +89,18 @@ class TracksRepositoryImpl(
     override fun updateFavoriteTag(track: Track): Track {
         val idList = appDatabase.trackDao().getIdListTrack()
         idList.forEach {
-            if (track.trackId == it) return Track(track.trackId,
+            if (track.trackId == it) return Track(
+                track.trackId,
                 track.trackName, track.artistName, track.collectionName, track.releaseDate,
                 track.primaryGenreName, track.country, track.trackTimeMillis, track.artworkUrl100,
-                track.previewUrl, true)
+                track.previewUrl, true
+            )
         }
-        return Track(track.trackId,
+        return Track(
+            track.trackId,
             track.trackName, track.artistName, track.collectionName, track.releaseDate,
             track.primaryGenreName, track.country, track.trackTimeMillis, track.artworkUrl100,
-            track.previewUrl, false)
+            track.previewUrl, false
+        )
     }
 }
