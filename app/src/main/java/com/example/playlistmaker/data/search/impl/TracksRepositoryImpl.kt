@@ -5,7 +5,7 @@ import com.example.playlistmaker.data.db.converter.TrackDtoConverter
 import com.example.playlistmaker.data.search.dto.TracksSearchRequest
 import com.example.playlistmaker.data.search.dto.TracksSearchResponse
 import com.example.playlistmaker.data.search.network.NetworkClient
-import com.example.playlistmaker.data.search.TracksRepository
+import com.example.playlistmaker.domain.search.TracksRepository
 import com.example.playlistmaker.data.storage.StorageClient
 import com.example.playlistmaker.domain.player.models.Track
 import kotlinx.coroutines.flow.Flow

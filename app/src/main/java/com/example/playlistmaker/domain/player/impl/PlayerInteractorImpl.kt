@@ -2,7 +2,7 @@ package com.example.playlistmaker.domain.player.impl
 
 import com.example.playlistmaker.domain.player.OnStateChangeListener
 import com.example.playlistmaker.domain.player.PlayerInteractor
-import com.example.playlistmaker.data.player.PlayerRepository
+import com.example.playlistmaker.domain.player.PlayerRepository
 import com.example.playlistmaker.domain.player.models.Track
 
 class PlayerInteractorImpl (private val playerRepository: PlayerRepository) : PlayerInteractor {

@@ -4,12 +4,9 @@ import android.icu.text.SimpleDateFormat
 import android.media.MediaPlayer
 import com.example.playlistmaker.domain.player.OnStateChangeListener
 import com.example.playlistmaker.domain.player.Player
+import com.example.playlistmaker.domain.player.PlayerRepository
 import com.example.playlistmaker.domain.player.state.PlayerState
 import com.example.playlistmaker.domain.player.models.Track
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import java.util.Locale
 
 class PlayerRepositoryImpl () : PlayerRepository, Player {

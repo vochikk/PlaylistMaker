@@ -1,7 +1,5 @@
 package com.example.playlistmaker.di
 
-import com.example.playlistmaker.data.search.TracksRepository
-import com.example.playlistmaker.data.search.impl.TracksRepositoryImpl
 import com.example.playlistmaker.domain.db.FavoriteInteractor
 import com.example.playlistmaker.domain.db.impl.FavoriteInteractorImpl
 import com.example.playlistmaker.domain.player.PlayerInteractor
