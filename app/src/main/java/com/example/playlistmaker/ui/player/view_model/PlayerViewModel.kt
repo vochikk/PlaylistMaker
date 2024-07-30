@@ -5,20 +5,27 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.playlistmaker.domain.db.FavoriteInteractor
 import com.example.playlistmaker.domain.player.OnStateChangeListener
 import com.example.playlistmaker.domain.player.PlayerInteractor
 import com.example.playlistmaker.domain.player.models.Track
 import com.example.playlistmaker.domain.player.state.PlayerState
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class PlayerViewModel(
-    private val playerInteractor: PlayerInteractor
+    private val playerInteractor: PlayerInteractor,
+    private val favoriteInteractor: FavoriteInteractor
     ): ViewModel() {
 
     private val _playerStateLiveDate = MutableLiveData<PlayerState>()
     val playerStateLiveData: LiveData<PlayerState> = _playerStateLiveDate
+
+    private val _likeStateLiveData = MutableLiveData<Boolean>()
+    val likeStateLiveData: LiveData<Boolean> = _likeStateLiveData
+
     private var timerJob: Job? = null
     private var newState: PlayerState = PlayerState.PREPARED()
 
@@ -66,6 +73,19 @@ class PlayerViewModel(
             }
             _playerStateLiveDate.postValue(PlayerState.PREPARED())
             timerJob?.cancel()
+        }
+    }
+
+    fun updateFavorite(track: Track) {
+        viewModelScope.launch(Dispatchers.IO) {
+            if (track.isFavorite) {
+                favoriteInteractor.delteTrack(track)
+                track.isFavorite = false
+            } else {
+                favoriteInteractor.insertTrack(track)
+                track.isFavorite = true
+            }
+            _likeStateLiveData.postValue(track.isFavorite)
         }
     }
 

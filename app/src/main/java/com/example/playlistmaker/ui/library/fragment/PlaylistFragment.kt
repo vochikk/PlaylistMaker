@@ -12,22 +12,9 @@ import org.koin.core.parameter.parametersOf
 
 class PlaylistFragment: Fragment() {
 
-    companion object {
-        private const val LIBRARY = "library"
-
-        fun newInstance(isVisible: Boolean) = PlaylistFragment().apply {
-            arguments = Bundle().apply {
-                putBoolean(LIBRARY, isVisible)
-            }
-        }
-    }
-
     private var _binding: FragmentPlaylistBinding? = null
     private val binding get(): FragmentPlaylistBinding = _binding!!
 
-    private val playlistViewModel: PlaylistViewModel by viewModel {
-        parametersOf(requireArguments().getBoolean(LIBRARY))
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -40,9 +27,7 @@ class PlaylistFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        playlistViewModel.stateLiveData.observe(viewLifecycleOwner){
-            render()
-        }
+        render()
     }
 
     override fun onDestroy() {

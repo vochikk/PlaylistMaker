@@ -1,6 +1,5 @@
-package com.example.playlistmaker.data.player
+package com.example.playlistmaker.domain.player
 
-import com.example.playlistmaker.domain.player.Player
 import com.example.playlistmaker.domain.player.models.Track
 
 interface PlayerRepository : Player {

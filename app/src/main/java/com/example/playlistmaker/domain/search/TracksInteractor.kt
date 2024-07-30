@@ -14,4 +14,6 @@ interface TracksInteractor {
 
     fun clearTracksList()
 
+    fun updateFavoriteTag(track: Track): Track
+
 }

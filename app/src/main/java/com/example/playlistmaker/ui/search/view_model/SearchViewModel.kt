@@ -6,59 +6,73 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.playlistmaker.di.viewModelModule
 import com.example.playlistmaker.domain.player.models.Track
 import com.example.playlistmaker.domain.search.TracksInteractor
 import com.example.playlistmaker.ui.search.state.SearchState
 import com.example.playlistmaker.utils.debounce
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 
 class SearchViewModel(
     private val tracksInteractor: TracksInteractor
-): ViewModel() {
+) : ViewModel() {
 
     private var _searchStateLiveData = MutableLiveData<SearchState>()
     val searchStateLiveData: LiveData<SearchState> = _searchStateLiveData
 
     private var latestSearchText: String? = null
 
-    private val trackSearchDebounce = debounce<String> (SEARCH_DEBOUNCE_DELAY_MILLIS,
-                                                        viewModelScope,
-                                            true) { changedText ->
+    private val trackSearchDebounce = debounce<String>(
+        SEARCH_DEBOUNCE_DELAY_MILLIS,
+        viewModelScope,
+        true
+    ) { changedText ->
         searchRequest(changedText)
     }
 
-    fun searchDebounce (changedText: String) {
+    fun searchDebounce(changedText: String) {
         if (latestSearchText != changedText) {
             latestSearchText = changedText
             trackSearchDebounce(changedText)
         }
     }
 
-    fun searchRequest (expression: String) {
+    fun searchRequest(expression: String) {
         if (expression.isNotEmpty()) {
 
             _searchStateLiveData.postValue(SearchState.isLoading)
 
-            viewModelScope.launch {
+            viewModelScope.launch(Dispatchers.IO) {
                 tracksInteractor
                     .searchTracks(expression)
-                    .collect{tracks ->
-                        processResult(tracks)}
+                    .collect { tracks ->
+                        processResult(tracks)
+                    }
             }
         } else _searchStateLiveData.postValue(SearchState.HistoryView)
     }
 
     fun getTracksList(): List<Track> {
-        return tracksInteractor.getTracksList()
-    }
-
-    fun saveTrack(track: Track) {
-        tracksInteractor.saveTrack(track)
+        val trackList = tracksInteractor.getTracksList()
+        trackList.forEach {
+            updateFavoriteTag(it)
+        }
+        return trackList
     }
 
     fun clearTracksList() {
         tracksInteractor.clearTracksList()
+    }
+
+    fun updateFavoriteTag(track: Track) {
+        viewModelScope.launch(Dispatchers.IO) {
+            tracksInteractor.saveTrack(tracksInteractor.updateFavoriteTag(track))
+        }
+
     }
 
     private fun processResult(searchTracks: List<Track>?) {

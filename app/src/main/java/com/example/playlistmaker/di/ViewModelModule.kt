@@ -11,7 +11,7 @@ import org.koin.dsl.module
 val viewModelModule = module {
 
     viewModel {
-        PlayerViewModel(get())
+        PlayerViewModel(get(), get())
     }
 
     viewModel {
@@ -22,11 +22,11 @@ val viewModelModule = module {
         SettingsViewModel(get(), get())
     }
 
-    viewModel {(isVisible: Boolean) ->
-        FavoriteViewModel(isVisible)
+    viewModel {
+        FavoriteViewModel(get())
     }
 
-    viewModel {(isVisible: Boolean) ->
-        PlaylistViewModel(isVisible)
+    viewModel {
+        PlaylistViewModel()
     }
 }

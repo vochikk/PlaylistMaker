@@ -1,14 +1,11 @@
 package com.example.playlistmaker.domain.search.impl
 
-import java.util.concurrent.Executors
-import com.example.playlistmaker.data.search.TracksRepository
+import com.example.playlistmaker.domain.search.TracksRepository
 import com.example.playlistmaker.domain.player.models.Track
 import com.example.playlistmaker.domain.search.TracksInteractor
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
 
-class TracksInteractorImpl (private val repository: TracksRepository) : TracksInteractor {
+class TracksInteractorImpl(private val repository: TracksRepository) : TracksInteractor {
 
     override fun searchTracks(expression: String): Flow<List<Track>?> {
         return repository.searchTracks(expression)
@@ -28,5 +25,9 @@ class TracksInteractorImpl (private val repository: TracksRepository) : TracksIn
 
     override fun clearTracksList() {
         repository.clearTracksList()
+    }
+
+    override fun updateFavoriteTag(track: Track): Track {
+        return repository.updateFavoriteTag(track)
     }
 }

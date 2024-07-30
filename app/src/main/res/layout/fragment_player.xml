@@ -6,17 +6,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?attr/colorOnBackground"
-    tools:context=".ui.player.activity.PlayerActivity">
+    tools:context=".ui.player.fragment.PlayerFragment">
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/left_guidline"
+        android:id="@+id/leftGuidline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.05"/>
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/right_guidline"
+        android:id="@+id/rightGuidline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -29,7 +29,7 @@
         android:src="@drawable/back"
         android:layout_marginTop="@dimen/padding_16"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toEndOf="@id/left_guidline"
+        app:layout_constraintStart_toEndOf="@id/leftGuidline"
         app:tint="?attr/colorPrimaryVariant"/>
 
     <ImageView
@@ -43,14 +43,14 @@
         android:background="?attr/colorOnBackground"
         app:layout_constraintVertical_chainStyle="spread_inside"
         app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintStart_toEndOf="@id/left_guidline"
-        app:layout_constraintEnd_toStartOf="@id/right_guidline"
+        app:layout_constraintStart_toEndOf="@id/leftGuidline"
+        app:layout_constraintEnd_toStartOf="@id/rightGuidline"
         app:layout_constraintTop_toBottomOf="@id/buttonBack"
         app:layout_constraintBottom_toTopOf="@id/trackName"/>
 
     <TextView
         android:id="@+id/trackName"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="@string/track_name"
         android:textColor="?attr/colorPrimaryVariant"
@@ -59,7 +59,8 @@
         android:textFontWeight="400"
         android:layout_marginTop="@dimen/padding_16"
         app:layout_constraintTop_toBottomOf="@id/imageAlbum"
-        app:layout_constraintStart_toEndOf="@id/left_guidline"/>
+        app:layout_constraintStart_toEndOf="@id/leftGuidline"
+        app:layout_constraintEnd_toStartOf="@id/rightGuidline"/>
 
     <TextView
         android:id="@+id/artistName"
@@ -72,7 +73,7 @@
         android:textFontWeight="400"
         android:layout_marginTop="@dimen/padding_8"
         app:layout_constraintTop_toBottomOf="@id/trackName"
-        app:layout_constraintStart_toEndOf="@id/left_guidline"/>
+        app:layout_constraintStart_toEndOf="@id/leftGuidline"/>
 
     <ImageButton
         android:id="@+id/buttonPlay"
@@ -94,7 +95,7 @@
         android:background="@drawable/rounded_button"
         android:src="@drawable/ic_button_add"
         android:contentDescription="@string/button_add"
-        app:layout_constraintStart_toEndOf="@id/left_guidline"
+        app:layout_constraintStart_toEndOf="@id/leftGuidline"
         app:layout_constraintTop_toTopOf="@id/buttonPlay"
         app:layout_constraintBottom_toBottomOf="@id/buttonPlay"/>
 
@@ -106,7 +107,7 @@
         android:src="@drawable/ic_button_like"
         android:contentDescription="@string/button_like"
         app:layout_constraintTop_toTopOf="@id/buttonAdd"
-        app:layout_constraintEnd_toStartOf="@id/right_guidline"/>
+        app:layout_constraintEnd_toStartOf="@id/rightGuidline"/>
 
     <TextView
         android:id="@+id/playTime"
@@ -131,7 +132,7 @@
         android:textColor="@color/icon_tint"
         android:layout_marginTop="@dimen/padding_16"
         app:layout_constraintVertical_chainStyle="spread"
-        app:layout_constraintStart_toEndOf="@id/left_guidline"
+        app:layout_constraintStart_toEndOf="@id/leftGuidline"
         app:layout_constraintTop_toBottomOf="@id/playTime"
         app:layout_constraintBottom_toTopOf="@id/labelAlbumName"/>
 
@@ -144,7 +145,7 @@
         android:text="@string/label_album_name"
         android:textSize="@dimen/text_13"
         android:textColor="@color/icon_tint"
-        app:layout_constraintStart_toEndOf="@id/left_guidline"
+        app:layout_constraintStart_toEndOf="@id/leftGuidline"
         app:layout_constraintTop_toBottomOf="@id/labelTrackTime"
         app:layout_constraintBottom_toTopOf="@id/labelReleaseDate"/>
 
@@ -157,7 +158,7 @@
         android:text="@string/label_release_date"
         android:textSize="@dimen/text_13"
         android:textColor="@color/icon_tint"
-        app:layout_constraintStart_toEndOf="@id/left_guidline"
+        app:layout_constraintStart_toEndOf="@id/leftGuidline"
         app:layout_constraintTop_toBottomOf="@id/labelAlbumName"
         app:layout_constraintBottom_toTopOf="@id/labelGenreName"/>
 
@@ -170,7 +171,7 @@
         android:text="@string/label_genre_name"
         android:textSize="@dimen/text_13"
         android:textColor="@color/icon_tint"
-        app:layout_constraintStart_toEndOf="@id/left_guidline"
+        app:layout_constraintStart_toEndOf="@id/leftGuidline"
         app:layout_constraintTop_toBottomOf="@id/labelReleaseDate"
         app:layout_constraintBottom_toTopOf="@id/labelCountry"/>
 
@@ -183,7 +184,7 @@
         android:layout_marginBottom="@dimen/padding_8"
         android:textSize="@dimen/text_13"
         android:textColor="@color/icon_tint"
-        app:layout_constraintStart_toEndOf="@id/left_guidline"
+        app:layout_constraintStart_toEndOf="@id/leftGuidline"
         app:layout_constraintTop_toBottomOf="@id/labelGenreName"
         app:layout_constraintBottom_toBottomOf="parent"/>
 
@@ -202,7 +203,7 @@
         android:textColor="?attr/colorPrimaryVariant"
         android:textSize="@dimen/text_13"
         app:layout_constraintBaseline_toBaselineOf="@id/labelTrackTime"
-        app:layout_constraintEnd_toStartOf="@id/right_guidline"
+        app:layout_constraintEnd_toStartOf="@id/rightGuidline"
         app:layout_constraintTop_toTopOf="@id/labelTrackTime"
         app:layout_constraintVertical_chainStyle="spread"
         app:layout_constraintBottom_toTopOf="@id/albumName"/>
@@ -215,7 +216,7 @@
         android:textColor="?attr/colorPrimaryVariant"
         android:textSize="@dimen/text_13"
         app:layout_constraintBaseline_toBaselineOf="@id/labelAlbumName"
-        app:layout_constraintEnd_toStartOf="@id/right_guidline"
+        app:layout_constraintEnd_toStartOf="@id/rightGuidline"
         app:layout_constraintTop_toBottomOf="@id/trackTime"
         app:layout_constraintBottom_toTopOf="@id/releaseDate"/>
 
@@ -227,7 +228,7 @@
         android:textColor="?attr/colorPrimaryVariant"
         android:textSize="@dimen/text_13"
         app:layout_constraintBaseline_toBaselineOf="@id/labelReleaseDate"
-        app:layout_constraintEnd_toStartOf="@id/right_guidline"
+        app:layout_constraintEnd_toStartOf="@id/rightGuidline"
         app:layout_constraintTop_toBottomOf="@id/albumName"
         app:layout_constraintBottom_toTopOf="@id/genreName"/>
 
@@ -239,7 +240,7 @@
         android:textSize="@dimen/text_13"
         android:textColor="?attr/colorPrimaryVariant"
         app:layout_constraintBaseline_toBaselineOf="@id/labelGenreName"
-        app:layout_constraintEnd_toStartOf="@id/right_guidline"
+        app:layout_constraintEnd_toStartOf="@id/rightGuidline"
         app:layout_constraintTop_toBottomOf="@id/releaseDate"
         app:layout_constraintBottom_toTopOf="@id/country"/>
 
@@ -251,7 +252,7 @@
         android:textSize="@dimen/text_13"
         android:textColor="?attr/colorPrimaryVariant"
         app:layout_constraintBaseline_toBaselineOf="@id/labelCountry"
-        app:layout_constraintEnd_toStartOf="@id/right_guidline"
+        app:layout_constraintEnd_toStartOf="@id/rightGuidline"
         app:layout_constraintTop_toBottomOf="@id/genreName"
         app:layout_constraintBottom_toBottomOf="parent"/>
 

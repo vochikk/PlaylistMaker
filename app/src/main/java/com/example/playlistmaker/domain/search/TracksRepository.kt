@@ -1,4 +1,4 @@
-package com.example.playlistmaker.data.search
+package com.example.playlistmaker.domain.search
 
 import com.example.playlistmaker.domain.player.models.Track
 import kotlinx.coroutines.flow.Flow
@@ -13,4 +13,6 @@ interface TracksRepository {
     fun saveTrack (track: Track)
 
     fun clearTracksList ()
+
+    fun updateFavoriteTag(track: Track) : Track
 }
