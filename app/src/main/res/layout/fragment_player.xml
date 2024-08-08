@@ -263,4 +263,55 @@
         android:visibility="visible"
         app:constraint_referenced_ids="labelAlbumName, albumName"/>
 
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/bottomSheet"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            app:behavior_hideable="true"
+            app:behavior_peekHeight="240dp"
+            android:background="@drawable/background_bottom_sheet"
+            app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/padding_32"
+                android:fontFamily="@font/ys_display_medium"
+                android:gravity="center"
+                android:text="@string/add_to_playlist"
+                android:textColor="?attr/colorPrimaryVariant"
+                android:textFontWeight="500"
+                android:textSize="@dimen/text_19"/>
+
+            <Button
+                android:id="@+id/buttonNewPlaylist"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/padding_32"
+                android:layout_gravity="center_horizontal"
+                app:cornerRadius="@dimen/corner_56"
+                android:text="@string/new_playlist"
+                android:textSize="@dimen/text_14"
+                android:textAllCaps="false"
+                android:textStyle="normal"
+                android:fontFamily="@font/ys_display_medium"
+                android:textFontWeight="500"
+                android:textColor="?attr/colorOnBackground"
+                android:backgroundTint="?attr/colorPrimaryVariant"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvPlayList"
+                android:padding="@dimen/padding_16"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+
+        </LinearLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,16 +1,16 @@
 package com.example.playlistmaker.data.db
 
-import android.content.Context
 import androidx.room.Database
-import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.example.playlistmaker.data.db.dao.PlayListDao
 import com.example.playlistmaker.data.db.dao.TrackDao
+import com.example.playlistmaker.data.db.entity.PlayListEntity
 import com.example.playlistmaker.data.db.entity.TrackEntity
-import org.koin.android.ext.koin.androidContext
 
-@Database(version = 1, entities = [TrackEntity::class])
+@Database(version = 1, entities = [TrackEntity::class, PlayListEntity::class])
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun trackDao(): TrackDao
 
+    abstract fun playlistDao(): PlayListDao
 }

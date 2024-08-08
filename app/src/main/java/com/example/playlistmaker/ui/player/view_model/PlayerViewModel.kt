@@ -1,15 +1,21 @@
 package com.example.playlistmaker.ui.player.view_model
 
-import android.util.Log
+import android.content.ClipData.Item
+import android.widget.Toast
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.playlistmaker.data.db.entity.PlayListEntity
 import com.example.playlistmaker.domain.db.FavoriteInteractor
+import com.example.playlistmaker.domain.db.PlayListInteractor
 import com.example.playlistmaker.domain.player.OnStateChangeListener
 import com.example.playlistmaker.domain.player.PlayerInteractor
 import com.example.playlistmaker.domain.player.models.Track
 import com.example.playlistmaker.domain.player.state.PlayerState
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -17,8 +23,9 @@ import kotlinx.coroutines.launch
 
 class PlayerViewModel(
     private val playerInteractor: PlayerInteractor,
-    private val favoriteInteractor: FavoriteInteractor
-    ): ViewModel() {
+    private val favoriteInteractor: FavoriteInteractor,
+    private val plylistInteractor: PlayListInteractor
+) : ViewModel() {
 
     private val _playerStateLiveDate = MutableLiveData<PlayerState>()
     val playerStateLiveData: LiveData<PlayerState> = _playerStateLiveDate
@@ -26,8 +33,12 @@ class PlayerViewModel(
     private val _likeStateLiveData = MutableLiveData<Boolean>()
     val likeStateLiveData: LiveData<Boolean> = _likeStateLiveData
 
+    private val _playlistLiveData = MutableLiveData<List<PlayListEntity>>()
+    val playlistLiveData: LiveData<List<PlayListEntity>> = _playlistLiveData
+
     private var timerJob: Job? = null
     private var newState: PlayerState = PlayerState.PREPARED()
+
 
     private fun onChange() {
         playerInteractor.setListener(object : OnStateChangeListener {
@@ -61,7 +72,7 @@ class PlayerViewModel(
         playerInteractor.realese()
     }
 
-    fun getTimer() : String {
+    fun getTimer(): String {
         return playerInteractor.getTimer()
     }
 
@@ -87,6 +98,44 @@ class PlayerViewModel(
             }
             _likeStateLiveData.postValue(track.isFavorite)
         }
+    }
+
+    fun getPlayList() {
+        viewModelScope.launch(Dispatchers.IO) {
+            plylistInteractor.getAllPlaylists().collect { list ->
+                _playlistLiveData.postValue(list)
+            }
+        }
+    }
+
+    fun updatePlayList(track: Track, playListEntity: PlayListEntity): Boolean {
+        var str: String = ""
+        var isInclude = false
+        var trackList: MutableList<Track> = mutableListOf()
+
+        if (playListEntity.sizePlaylist != 0) {
+            trackList.addAll(Gson().fromJson(playListEntity.tracksList, object : TypeToken<ArrayList<Track>>() {}.type))
+
+            trackList.forEach {
+                isInclude = track == it
+            }
+
+            if (!isInclude) {
+                trackList.add(track)
+            }
+
+        } else {
+            trackList.add(track)
+        }
+
+        str = Gson().toJson(trackList)
+        playListEntity.tracksList = str
+        playListEntity.sizePlaylist = trackList.size
+
+        viewModelScope.launch(Dispatchers.IO) {
+            plylistInteractor.updateTracksList(playListEntity)
+        }
+        return isInclude
     }
 
     companion object {

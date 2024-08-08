@@ -98,7 +98,7 @@ class SearchFragment : Fragment() {
 
 
         adapter.tracks = tracks as ArrayList<Track>
-        binding.rvSearchList.adapter = adapter
+        binding.rvSearch.adapter = adapter
         adapter.setOnClickListener(object : TrackAdapter.OnClickListener {
             override fun onClick(track: Track) {
                 viewModel.updateFavoriteTag(track)
@@ -178,7 +178,7 @@ class SearchFragment : Fragment() {
         when (status) {
             StatusVisability.NON_FOUND_VISIBLE -> {
                 adapter.notifyDataSetChanged()
-                binding.rvSearchList.visibility = View.GONE
+                binding.rvSearch.visibility = View.GONE
                 binding.historySearch.visibility = View.GONE
                 binding.progressBar.visibility = View.GONE
                 binding.placeholder.visibility = View.VISIBLE
@@ -190,7 +190,7 @@ class SearchFragment : Fragment() {
 
             StatusVisability.ERROR_VISIBLE -> {
                 adapter.notifyDataSetChanged()
-                binding.rvSearchList.visibility = View.GONE
+                binding.rvSearch.visibility = View.GONE
                 binding.historySearch.visibility = View.GONE
                 binding.progressBar.visibility = View.GONE
                 binding.placeholder.visibility = View.VISIBLE
@@ -203,21 +203,21 @@ class SearchFragment : Fragment() {
                 binding.placeholder.visibility = View.GONE
                 binding.historySearch.visibility = View.GONE
                 binding.progressBar.visibility = View.GONE
-                binding.rvSearchList.visibility = View.VISIBLE
+                binding.rvSearch.visibility = View.VISIBLE
                 adapter.notifyDataSetChanged()
             }
 
             StatusVisability.HISTORY_VISIBLE -> {
                 binding.placeholder.visibility = View.GONE
                 binding.historySearch.visibility = View.VISIBLE
-                binding.rvSearchList.visibility = View.GONE
+                binding.rvSearch.visibility = View.GONE
                 adapter.notifyDataSetChanged()
             }
 
             StatusVisability.SHOW_LOAD -> {
                 binding.placeholder.visibility = View.GONE
                 binding.historySearch.visibility = View.GONE
-                binding.rvSearchList.visibility = View.GONE
+                binding.rvSearch.visibility = View.GONE
                 binding.progressBar.visibility = View.VISIBLE
                 adapter.notifyDataSetChanged()
             }

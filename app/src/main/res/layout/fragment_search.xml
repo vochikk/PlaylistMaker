@@ -61,7 +61,7 @@
     </FrameLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvSearchList"
+        android:id="@+id/rvSearch"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
