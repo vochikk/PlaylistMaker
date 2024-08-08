@@ -17,4 +17,6 @@
     <dimen name="padding_40">40dp</dimen>
     <dimen name="padding_48">48dp</dimen>
     <dimen name="corner_56">56dp</dimen>
+    <dimen name="corner_8">8dp</dimen>
+    <dimen name="width_2">2dp</dimen>
 </resources>

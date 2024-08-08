@@ -1,23 +1,25 @@
 package com.example.playlistmaker.ui.player.fragment
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
+import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.commit
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
+import com.example.playlistmaker.data.db.entity.PlayListEntity
 import com.example.playlistmaker.databinding.FragmentPlayerBinding
 import com.example.playlistmaker.domain.player.state.PlayerState
 import com.example.playlistmaker.domain.player.models.Track
+import com.example.playlistmaker.ui.player.view_holder.AddPlayListAdapter
 import com.example.playlistmaker.ui.player.view_model.PlayerViewModel
-import com.example.playlistmaker.ui.search.fragment.SearchFragment
 import com.example.playlistmaker.ui.search.fragment.SearchFragment.Companion.TRACK_KEY
-import com.google.android.material.bottomnavigation.BottomNavigationMenuView
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.gson.Gson
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -29,6 +31,9 @@ class PlayerFragment : Fragment() {
 
     private val viewModel by viewModel<PlayerViewModel>()
     private var newPlayerState: PlayerState? = null
+
+    private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
+    private val adapter = AddPlayListAdapter()
 
 
     override fun onCreateView(
@@ -45,6 +50,11 @@ class PlayerFragment : Fragment() {
 
         val trackToView = requireArguments().getString(TRACK_KEY)
         val track = Gson().fromJson(trackToView, Track::class.java)
+        binding.rvPlayList.adapter = adapter
+
+        bottomSheetBehavior = BottomSheetBehavior.from(binding.bottomSheet).apply {
+            state = BottomSheetBehavior.STATE_HIDDEN
+        }
 
         viewModel.playerStateLiveData.observe(viewLifecycleOwner){state ->
             render(state)
@@ -70,8 +80,43 @@ class PlayerFragment : Fragment() {
 
         binding.buttonLike.setOnClickListener {
             viewModel.updateFavorite(track)
-
         }
+
+        binding.buttonAdd.setOnClickListener {
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+        }
+
+        bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                when (newState) {
+                    BottomSheetBehavior.STATE_COLLAPSED -> {
+                        viewModel.getPlayList()
+                        viewModel.playlistLiveData.observe(viewLifecycleOwner){
+                            list -> renderBottomSheet(list)
+                        }
+
+                        adapter.setOnClickListener(object : AddPlayListAdapter.OnClickListener{
+                            override fun onClick(playListEntity: PlayListEntity) {
+                                val isInclude = (viewModel.updatePlayList(track, playListEntity))
+                                val str = if (isInclude) {
+                                    "Трек уже добавлен в плейлист ${playListEntity.namePlaylist}"
+                                } else {
+                                    "Добавлено в плейлист ${playListEntity.namePlaylist}"
+                                }
+                                seeMessage(str)
+                                viewModel.getPlayList()
+                            }
+                        })
+                        binding.buttonNewPlaylist.setOnClickListener {
+                            findNavController().navigate(R.id.action_playerFragment_to_createPlaylistFragment, bundleOf())
+                        }
+                    }
+                    else -> {}
+                }
+            }
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {}
+        })
 
     }
 
@@ -134,5 +179,19 @@ class PlayerFragment : Fragment() {
 
     private fun setTimerText (progress: String) {
         binding.playTime.text = progress
+    }
+
+    private fun renderBottomSheet (list: List<PlayListEntity>) {
+        if (!list.isNullOrEmpty()) {
+            adapter.playList.clear()
+            adapter.playList.addAll(list)
+            adapter.notifyDataSetChanged()
+            binding.rvPlayList.visibility = View.VISIBLE
+        }
+    }
+
+    private fun seeMessage(str: String) {
+        val toast: Toast = Toast.makeText(requireContext(), str, Toast.LENGTH_SHORT)
+        toast.show()
     }
 }
