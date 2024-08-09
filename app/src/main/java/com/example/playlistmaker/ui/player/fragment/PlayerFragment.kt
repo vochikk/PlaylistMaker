@@ -12,8 +12,8 @@ import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
-import com.example.playlistmaker.data.db.entity.PlayListEntity
 import com.example.playlistmaker.databinding.FragmentPlayerBinding
+import com.example.playlistmaker.domain.library.model.PlayList
 import com.example.playlistmaker.domain.player.state.PlayerState
 import com.example.playlistmaker.domain.player.models.Track
 import com.example.playlistmaker.ui.player.view_holder.AddPlayListAdapter
@@ -33,7 +33,7 @@ class PlayerFragment : Fragment() {
     private var newPlayerState: PlayerState? = null
 
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
-    private val adapter = AddPlayListAdapter()
+    private lateinit var adapter: AddPlayListAdapter
 
 
     override fun onCreateView(
@@ -50,16 +50,17 @@ class PlayerFragment : Fragment() {
 
         val trackToView = requireArguments().getString(TRACK_KEY)
         val track = Gson().fromJson(trackToView, Track::class.java)
+        adapter = AddPlayListAdapter(view.context)
         binding.rvPlayList.adapter = adapter
 
         bottomSheetBehavior = BottomSheetBehavior.from(binding.bottomSheet).apply {
             state = BottomSheetBehavior.STATE_HIDDEN
         }
 
-        viewModel.playerStateLiveData.observe(viewLifecycleOwner){state ->
+        viewModel.playerStateLiveData.observe(viewLifecycleOwner) { state ->
             render(state)
         }
-        viewModel.likeStateLiveData.observe(viewLifecycleOwner){state ->
+        viewModel.likeStateLiveData.observe(viewLifecycleOwner) { state ->
             setLikeButton(track.isFavorite)
         }
 
@@ -86,37 +87,54 @@ class PlayerFragment : Fragment() {
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
         }
 
-        bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
-            override fun onStateChanged(bottomSheet: View, newState: Int) {
-                when (newState) {
-                    BottomSheetBehavior.STATE_COLLAPSED -> {
-                        viewModel.getPlayList()
-                        viewModel.playlistLiveData.observe(viewLifecycleOwner){
-                            list -> renderBottomSheet(list)
-                        }
-
-                        adapter.setOnClickListener(object : AddPlayListAdapter.OnClickListener{
-                            override fun onClick(playListEntity: PlayListEntity) {
-                                val isInclude = (viewModel.updatePlayList(track, playListEntity))
-                                val str = if (isInclude) {
-                                    "Трек уже добавлен в плейлист ${playListEntity.namePlaylist}"
-                                } else {
-                                    "Добавлено в плейлист ${playListEntity.namePlaylist}"
-                                }
-                                seeMessage(str)
-                                viewModel.getPlayList()
+        bottomSheetBehavior.addBottomSheetCallback(
+            object : BottomSheetBehavior.BottomSheetCallback() {
+                override fun onStateChanged(bottomSheet: View, newState: Int) {
+                    when (newState) {
+                        BottomSheetBehavior.STATE_COLLAPSED -> {
+                            viewModel.getPlayList()
+                            viewModel.playlistLiveData.observe(viewLifecycleOwner) { list ->
+                                renderBottomSheet(list)
                             }
-                        })
-                        binding.buttonNewPlaylist.setOnClickListener {
-                            findNavController().navigate(R.id.action_playerFragment_to_createPlaylistFragment, bundleOf())
-                        }
-                    }
-                    else -> {}
-                }
-            }
 
-            override fun onSlide(bottomSheet: View, slideOffset: Float) {}
-        })
+                            adapter.setOnClickListener(object : AddPlayListAdapter.OnClickListener {
+                                override fun onClick(playList: PlayList) {
+                                    val isInclude =
+                                        (viewModel.updatePlayList(track, playList))
+                                    val str = if (isInclude) {
+                                        "${
+                                            view.resources
+                                                .getString(
+                                                    R.string.track_in_playlist
+                                                )
+                                        } ${playList.namePlaylist}"
+                                    } else {
+                                        "${
+                                            view.resources
+                                                .getString(
+                                                    R.string.track_add_in_playlist
+                                                )
+                                        } ${playList.namePlaylist}"
+                                    }
+                                    seeMessage(str)
+                                    viewModel.getPlayList()
+                                }
+                            })
+                            binding.buttonNewPlaylist.setOnClickListener {
+                                findNavController()
+                                    .navigate(
+                                        R.id.action_playerFragment_to_createPlaylistFragment,
+                                        bundleOf()
+                                    )
+                            }
+                        }
+
+                        else -> {}
+                    }
+                }
+
+                override fun onSlide(bottomSheet: View, slideOffset: Float) {}
+            })
 
     }
 
@@ -131,13 +149,13 @@ class PlayerFragment : Fragment() {
         _binding = null
     }
 
-    private fun render (state: PlayerState) {
+    private fun render(state: PlayerState) {
         setButton(state.isButtonPlay)
         setTimerText(state.progress)
         newPlayerState = state
     }
 
-    private fun drawLayout (track: Track) {
+    private fun drawLayout(track: Track) {
 
         binding.trackName.text = track.trackName
         binding.artistName.text = track.artistName
@@ -161,7 +179,7 @@ class PlayerFragment : Fragment() {
         }
     }
 
-    private fun setButton (isButtonPlay: Boolean) {
+    private fun setButton(isButtonPlay: Boolean) {
         if (isButtonPlay) {
             binding.buttonPlay.setImageResource(R.drawable.ic_button_play)
         } else {
@@ -177,11 +195,11 @@ class PlayerFragment : Fragment() {
         }
     }
 
-    private fun setTimerText (progress: String) {
+    private fun setTimerText(progress: String) {
         binding.playTime.text = progress
     }
 
-    private fun renderBottomSheet (list: List<PlayListEntity>) {
+    private fun renderBottomSheet(list: List<PlayList>) {
         if (!list.isNullOrEmpty()) {
             adapter.playList.clear()
             adapter.playList.addAll(list)

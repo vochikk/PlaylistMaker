@@ -18,8 +18,8 @@ import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.playlistmaker.R
-import com.example.playlistmaker.data.db.entity.PlayListEntity
 import com.example.playlistmaker.databinding.FragmentCreatePlaylistBinding
+import com.example.playlistmaker.domain.library.model.PlayList
 import com.example.playlistmaker.ui.library.view_model.CreatePlaylistViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -51,7 +51,7 @@ class CreatePlaylistFragment : Fragment() {
             registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
                 if (uri != null) {
                     binding.imagePlaylist.setImageURI(uri)
-                    imageUri = savePhotoInStorage(uri).toString()
+                    imageUri = uri.toString()
                 }
             }
 
@@ -78,14 +78,22 @@ class CreatePlaylistFragment : Fragment() {
         binding.buttonCreate.setOnClickListener {
             val name = binding.namePlaylist.text.toString()
             val about = binding.textAbout.text.toString()
-            val playListEntity = PlayListEntity(
+            val playList = PlayList(
                 namePlaylist = name,
                 about = about,
                 imageUri = imageUri,
                 idPlaylist = 0
             )
-            viewModel.savePlaylist(playListEntity)
-            val toast = Toast.makeText(requireContext(), "Плейлист $name создан", Toast.LENGTH_LONG)
+            savePhotoInStorage(imageUri.toUri(), name)
+            viewModel.savePlaylist(playList)
+            val toast = Toast.makeText(
+                requireContext(),
+                view.resources.getString(
+                    R.string.playlist_is_creation,
+                    playList.namePlaylist
+                ),
+                Toast.LENGTH_LONG
+            )
             toast.show()
             findNavController().navigateUp()
         }
@@ -118,16 +126,23 @@ class CreatePlaylistFragment : Fragment() {
         }
     }
 
-    private fun savePhotoInStorage (uri: Uri): Uri {
-        val filePath = File(requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "logoalbum")
-        if (!filePath.exists()) { filePath.mkdirs() }
-        val file = File(filePath, "cover.jpg")
+    private fun savePhotoInStorage(uri: Uri, name: String): Uri {
+        val filePath =
+            File(requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), LOGO_ALBUM)
+        if (!filePath.exists()) {
+            filePath.mkdirs()
+        }
+        val file = File(filePath, "${name}.jpg")
         val inputStream = requireActivity().contentResolver.openInputStream(uri)
         val outputStream = FileOutputStream(file)
         BitmapFactory
             .decodeStream(inputStream)
             .compress(Bitmap.CompressFormat.JPEG, 30, outputStream)
         return file.toUri()
+    }
+
+    companion object {
+        private const val LOGO_ALBUM = "logoalbum"
     }
 
 }

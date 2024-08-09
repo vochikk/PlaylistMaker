@@ -4,8 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.playlistmaker.data.db.entity.PlayListEntity
-import com.example.playlistmaker.domain.db.PlayListInteractor
+import com.example.playlistmaker.domain.library.PlayListInteractor
+import com.example.playlistmaker.domain.library.model.PlayList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -13,8 +13,8 @@ class PlaylistViewModel(
     private val interactor: PlayListInteractor
 ): ViewModel() {
 
-    private val _stateLiveData = MutableLiveData <List<PlayListEntity>>()
-    val stateLiveData: LiveData<List<PlayListEntity>> = _stateLiveData
+    private val _stateLiveData = MutableLiveData <List<PlayList>>()
+    val stateLiveData: LiveData<List<PlayList>> = _stateLiveData
 
     init {
         viewModelScope.launch(Dispatchers.IO) {

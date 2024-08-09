@@ -1,14 +1,13 @@
 package com.example.playlistmaker.ui.player.view_holder
 
-import android.view.LayoutInflater
+import android.content.Context
 import android.view.View
-import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
-import com.example.playlistmaker.data.db.entity.PlayListEntity
+import com.example.playlistmaker.domain.library.model.PlayList
 
 class AddPlayListHolder(view: View) : RecyclerView.ViewHolder(view) {
 
@@ -16,18 +15,16 @@ class AddPlayListHolder(view: View) : RecyclerView.ViewHolder(view) {
     private val name: TextView = itemView.findViewById(R.id.namePlaylist)
     private val size: TextView = itemView.findViewById(R.id.sizePlaylist)
 
-    fun bind(playListEntity: PlayListEntity) {
-        name.text = playListEntity.namePlaylist
-        size.text = when (playListEntity.sizePlaylist) {
-            1 -> { playListEntity.sizePlaylist.toString() + " трек"}
-            2 -> {playListEntity.sizePlaylist.toString() + " трека"}
-            3 -> {playListEntity.sizePlaylist.toString() + " трека"}
-            4 -> {playListEntity.sizePlaylist.toString() + " трека"}
-            else -> {playListEntity.sizePlaylist.toString() + " треков"}
-        }
+    fun bind(playList: PlayList, context: Context) {
+        name.text = playList.namePlaylist
+        size.text = context.resources.getQuantityString(
+            R.plurals.plurals,
+            playList.sizePlaylist,
+            playList.sizePlaylist
+        )
 
-        if (!playListEntity.imageUri.isNullOrEmpty()) {
-            image.setImageURI(playListEntity.imageUri.toUri())
+        if (!playList.imageUri.isNullOrEmpty()) {
+            image.setImageURI(playList.imageUri.toUri())
         } else {
             image.setImageResource(R.drawable.ic_placeholder)
         }

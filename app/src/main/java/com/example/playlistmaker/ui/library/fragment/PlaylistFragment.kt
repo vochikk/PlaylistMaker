@@ -9,19 +9,19 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.playlistmaker.R
-import com.example.playlistmaker.data.db.entity.PlayListEntity
 import com.example.playlistmaker.databinding.FragmentPlaylistBinding
+import com.example.playlistmaker.domain.library.model.PlayList
 import com.example.playlistmaker.ui.library.view_holder.PlayListAdapter
 import com.example.playlistmaker.ui.library.view_model.PlaylistViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class PlaylistFragment: Fragment() {
+class PlaylistFragment : Fragment() {
 
     private var _binding: FragmentPlaylistBinding? = null
     private val binding get(): FragmentPlaylistBinding = _binding!!
 
     private val viewModel: PlaylistViewModel by viewModel()
-    private val adapter=  PlayListAdapter()
+    private lateinit var adapter: PlayListAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -35,11 +35,13 @@ class PlaylistFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        adapter = PlayListAdapter(view.context)
+
         binding.rvPlayList.layoutManager = GridLayoutManager(requireContext(), 2)
         binding.rvPlayList.adapter = adapter
 
-        viewModel.stateLiveData.observe(viewLifecycleOwner){
-            list -> render(list)
+        viewModel.stateLiveData.observe(viewLifecycleOwner) { list ->
+            render(list)
         }
 
         binding.buttonNewPlaylist.setOnClickListener {
@@ -64,7 +66,7 @@ class PlaylistFragment: Fragment() {
         _binding = null
     }
 
-    private fun render(list: List<PlayListEntity>) {
+    private fun render(list: List<PlayList>) {
         if (list.isEmpty()) {
             with(binding) {
                 placeholderImage.visibility = View.VISIBLE

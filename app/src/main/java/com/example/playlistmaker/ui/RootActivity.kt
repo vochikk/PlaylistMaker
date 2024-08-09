@@ -1,12 +1,15 @@
 package com.example.playlistmaker.ui
 
+import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
+import androidx.sqlite.db.SupportSQLiteOpenHelper
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivityRootBinding
+import java.util.Locale
 
 class RootActivity : AppCompatActivity() {
 

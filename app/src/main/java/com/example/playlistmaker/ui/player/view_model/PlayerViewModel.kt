@@ -1,15 +1,13 @@
 package com.example.playlistmaker.ui.player.view_model
 
-import android.content.ClipData.Item
-import android.widget.Toast
-import androidx.core.content.ContentProviderCompat.requireContext
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.playlistmaker.data.db.entity.PlayListEntity
-import com.example.playlistmaker.domain.db.FavoriteInteractor
-import com.example.playlistmaker.domain.db.PlayListInteractor
+import com.example.playlistmaker.domain.player.FavoriteInteractor
+import com.example.playlistmaker.domain.library.PlayListInteractor
+import com.example.playlistmaker.domain.library.model.PlayList
 import com.example.playlistmaker.domain.player.OnStateChangeListener
 import com.example.playlistmaker.domain.player.PlayerInteractor
 import com.example.playlistmaker.domain.player.models.Track
@@ -33,8 +31,8 @@ class PlayerViewModel(
     private val _likeStateLiveData = MutableLiveData<Boolean>()
     val likeStateLiveData: LiveData<Boolean> = _likeStateLiveData
 
-    private val _playlistLiveData = MutableLiveData<List<PlayListEntity>>()
-    val playlistLiveData: LiveData<List<PlayListEntity>> = _playlistLiveData
+    private val _playlistLiveData = MutableLiveData<List<PlayList>>()
+    val playlistLiveData: LiveData<List<PlayList>> = _playlistLiveData
 
     private var timerJob: Job? = null
     private var newState: PlayerState = PlayerState.PREPARED()
@@ -90,7 +88,7 @@ class PlayerViewModel(
     fun updateFavorite(track: Track) {
         viewModelScope.launch(Dispatchers.IO) {
             if (track.isFavorite) {
-                favoriteInteractor.delteTrack(track)
+                favoriteInteractor.deleteTrack(track)
                 track.isFavorite = false
             } else {
                 favoriteInteractor.insertTrack(track)
@@ -108,32 +106,37 @@ class PlayerViewModel(
         }
     }
 
-    fun updatePlayList(track: Track, playListEntity: PlayListEntity): Boolean {
+    fun updatePlayList(track: Track, playList: PlayList): Boolean {
         var str: String = ""
         var isInclude = false
-        var trackList: MutableList<Track> = mutableListOf()
+        var trackList: MutableList<Int> = mutableListOf()
 
-        if (playListEntity.sizePlaylist != 0) {
-            trackList.addAll(Gson().fromJson(playListEntity.tracksList, object : TypeToken<ArrayList<Track>>() {}.type))
+        if (playList.sizePlaylist != 0) {
+            trackList.addAll(
+                Gson().fromJson(
+                    playList.tracksList,
+                    object : TypeToken<ArrayList<Int>>() {}.type
+                )
+            )
 
             trackList.forEach {
-                isInclude = track == it
+                isInclude = (track.trackId == it)
             }
+        }
 
-            if (!isInclude) {
-                trackList.add(track)
-            }
-
-        } else {
-            trackList.add(track)
+        if (!isInclude) {
+            trackList.add(track.trackId)
+            Log.d("log", trackList.toString())
         }
 
         str = Gson().toJson(trackList)
-        playListEntity.tracksList = str
-        playListEntity.sizePlaylist = trackList.size
+
+        playList.tracksList = str
+        playList.sizePlaylist = trackList.size
 
         viewModelScope.launch(Dispatchers.IO) {
-            plylistInteractor.updateTracksList(playListEntity)
+            favoriteInteractor.insertTrackInPlayList(track)
+            plylistInteractor.updateTracksList(playList)
         }
         return isInclude
     }
