@@ -12,6 +12,9 @@ interface TrackListDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertTrack (trackListEntity: TrackListEntity)
 
-    @Query("SELECT * FROM track_list_table WHERE :id")
-    fun getTrack (id: Int): TrackListEntity
+    @Query("SELECT * FROM track_list_table")
+    fun getTrackList (): List<TrackListEntity>
+
+    @Query("DELETE FROM track_list_table WHERE trackId = :id")
+    fun delete (id: Int)
 }

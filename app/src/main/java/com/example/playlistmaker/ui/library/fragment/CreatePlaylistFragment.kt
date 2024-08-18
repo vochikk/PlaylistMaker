@@ -1,5 +1,6 @@
 package com.example.playlistmaker.ui.library.fragment
 
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
@@ -15,12 +16,14 @@ import androidx.activity.addCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.net.toUri
+import androidx.core.text.set
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentCreatePlaylistBinding
 import com.example.playlistmaker.domain.library.model.PlayList
 import com.example.playlistmaker.ui.library.view_model.CreatePlaylistViewModel
+import com.example.playlistmaker.ui.playlist.fragment.PlaylistScreenFragment.Companion.PLAYLIST_TO_EDIT
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
@@ -31,6 +34,8 @@ class CreatePlaylistFragment : Fragment() {
     private var _binding: FragmentCreatePlaylistBinding? = null
     private val binding get(): FragmentCreatePlaylistBinding = _binding!!
     private var imageUri: String = ""
+    private var playListToEdit = 0
+    private var size = 0
     private lateinit var confirmDialog: MaterialAlertDialogBuilder
 
     private val viewModel: CreatePlaylistViewModel by viewModel()
@@ -47,10 +52,27 @@ class CreatePlaylistFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        var isEdit = false
+
+        if (!requireArguments().isEmpty) {
+            playListToEdit = requireArguments().getInt(PLAYLIST_TO_EDIT)
+            viewModel.playListLiveData.observe(viewLifecycleOwner) { playlist ->
+                viewPlaylistToEdit(playlist)
+                imageUri = playlist.imageUri
+                size = playlist.sizePlaylist
+            }
+            viewModel.getPlaylist(playListToEdit)
+            isEdit = true
+        }
+
         val pickPhoto =
             registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
                 if (uri != null) {
                     binding.imagePlaylist.setImageURI(uri)
+                    requireContext().contentResolver.takePersistableUriPermission(
+                        uri,
+                        Intent.FLAG_GRANT_READ_URI_PERMISSION
+                    )
                     imageUri = uri.toString()
                 }
             }
@@ -60,7 +82,11 @@ class CreatePlaylistFragment : Fragment() {
         }
 
         binding.buttonBack.setOnClickListener {
-            cancel()
+            if (isEdit) {
+                findNavController().navigateUp()
+            } else {
+                cancel()
+            }
         }
 
         val textWatcher = object : TextWatcher {
@@ -76,25 +102,38 @@ class CreatePlaylistFragment : Fragment() {
         textWatcher?.let { binding.namePlaylist.addTextChangedListener(it) }
 
         binding.buttonCreate.setOnClickListener {
-            val name = binding.namePlaylist.text.toString()
-            val about = binding.textAbout.text.toString()
-            val playList = PlayList(
-                namePlaylist = name,
-                about = about,
-                imageUri = imageUri,
-                idPlaylist = 0
-            )
-            savePhotoInStorage(imageUri.toUri(), name)
-            viewModel.savePlaylist(playList)
-            val toast = Toast.makeText(
-                requireContext(),
-                view.resources.getString(
-                    R.string.playlist_is_creation,
-                    playList.namePlaylist
-                ),
-                Toast.LENGTH_LONG
-            )
-            toast.show()
+            if (isEdit) {
+                viewModel.updatePlaylist(
+                    PlayList(
+                        playListToEdit,
+                        binding.namePlaylist.text.toString(),
+                        binding.textAbout.text.toString(),
+                        imageUri,
+                        size
+                    )
+                )
+            } else {
+                val name = binding.namePlaylist.text.toString()
+                val about = binding.textAbout.text.toString()
+                val playList = PlayList(
+                    namePlaylist = name,
+                    about = about,
+                    imageUri = imageUri,
+                    idPlaylist = 0
+                )
+                if (imageUri.isNotEmpty()) {
+                    savePhotoInStorage(imageUri.toUri(), name)
+                }
+                viewModel.savePlaylist(playList)
+                Toast.makeText(
+                    requireContext(),
+                    view.resources.getString(
+                        R.string.playlist_is_creation,
+                        playList.namePlaylist
+                    ),
+                    Toast.LENGTH_LONG
+                ).show()
+            }
             findNavController().navigateUp()
         }
 
@@ -107,7 +146,11 @@ class CreatePlaylistFragment : Fragment() {
             }
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
-            cancel()
+            if (isEdit) {
+                findNavController().navigateUp()
+            } else {
+                cancel()
+            }
         }
     }
 
@@ -139,6 +182,18 @@ class CreatePlaylistFragment : Fragment() {
             .decodeStream(inputStream)
             .compress(Bitmap.CompressFormat.JPEG, 30, outputStream)
         return file.toUri()
+    }
+
+    fun viewPlaylistToEdit(playList: PlayList) {
+        binding.title.text = view?.resources?.getString(R.string.edit_title)
+        binding.buttonCreate.text = view?.resources?.getString(R.string.save_playlist)
+
+        if (!playList.imageUri.isNullOrEmpty()) {
+            binding.imagePlaylist.setImageURI(playList.imageUri.toUri())
+        }
+
+        binding.namePlaylist.setText(playList.namePlaylist)
+        binding.textAbout.setText(playList.about)
     }
 
     companion object {

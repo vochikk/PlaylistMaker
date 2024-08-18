@@ -47,7 +47,7 @@ class TrackDbConverter {
             track.primaryGenreName,
             track.country,
             track.trackTimeMillis,
-            track.artistName,
+            track.artworkUrl100,
             track.previewUrl
         )
     }

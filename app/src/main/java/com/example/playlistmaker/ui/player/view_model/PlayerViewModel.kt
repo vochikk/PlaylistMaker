@@ -1,10 +1,13 @@
 package com.example.playlistmaker.ui.player.view_model
 
+import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.playlistmaker.R
 import com.example.playlistmaker.domain.player.FavoriteInteractor
 import com.example.playlistmaker.domain.library.PlayListInteractor
 import com.example.playlistmaker.domain.library.model.PlayList
@@ -106,39 +109,45 @@ class PlayerViewModel(
         }
     }
 
-    fun updatePlayList(track: Track, playList: PlayList): Boolean {
-        var str: String = ""
-        var isInclude = false
-        var trackList: MutableList<Int> = mutableListOf()
-
-        if (playList.sizePlaylist != 0) {
-            trackList.addAll(
-                Gson().fromJson(
-                    playList.tracksList,
-                    object : TypeToken<ArrayList<Int>>() {}.type
-                )
-            )
-
-            trackList.forEach {
-                isInclude = (track.trackId == it)
-            }
-        }
-
-        if (!isInclude) {
-            trackList.add(track.trackId)
-            Log.d("log", trackList.toString())
-        }
-
-        str = Gson().toJson(trackList)
-
-        playList.tracksList = str
-        playList.sizePlaylist = trackList.size
+    fun updatePlayList(track: Track, playList: PlayList, context: Context) {
+        var isInclude: Boolean = false
 
         viewModelScope.launch(Dispatchers.IO) {
-            favoriteInteractor.insertTrackInPlayList(track)
+            favoriteInteractor.getTrackList(playList).collect { list ->
+                if (list.contains(track.trackId)) {
+                    isInclude = true
+                }
+            }
+
+            viewModelScope.launch(Dispatchers.Main) {
+                val str = if (isInclude) {
+                    "${
+                        context.resources
+                            .getString(
+                                R.string.track_in_playlist
+                            )
+                    } ${playList.namePlaylist}"
+                } else {
+                    "${
+                        context.resources
+                            ?.getString(
+                                R.string.track_add_in_playlist
+                            )
+                    } ${playList.namePlaylist}"
+                }
+                val toast: Toast = Toast.makeText(context, str, Toast.LENGTH_SHORT)
+                toast.show()
+            }
+
+            favoriteInteractor.insertTrackInPlayList(playList, track)
+            favoriteInteractor.getTrackList(playList).collect { list ->
+                playList.sizePlaylist = list.size
+            }
             plylistInteractor.updateTracksList(playList)
+            getPlayList()
+
+
         }
-        return isInclude
     }
 
     companion object {

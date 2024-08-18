@@ -13,6 +13,7 @@ import com.example.playlistmaker.databinding.FragmentPlaylistBinding
 import com.example.playlistmaker.domain.library.model.PlayList
 import com.example.playlistmaker.ui.library.view_holder.PlayListAdapter
 import com.example.playlistmaker.ui.library.view_model.PlaylistViewModel
+import com.google.gson.Gson
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PlaylistFragment : Fragment() {
@@ -49,6 +50,17 @@ class PlaylistFragment : Fragment() {
                 R.id.action_libraryFragment_to_createPlaylistFragment, bundleOf()
             )
         }
+
+        adapter.setOnClickListener(object : PlayListAdapter.OnClickListener {
+            override fun onClick(playList: PlayList) {
+                val playListToView = playList.idPlaylist
+                findNavController().navigate(
+                    R.id.action_libraryFragment_to_playlistScreenFragment, bundleOf(
+                        PLAYLIST to playListToView
+                    )
+                )
+            }
+        })
     }
 
     override fun onStart() {
@@ -69,6 +81,7 @@ class PlaylistFragment : Fragment() {
     private fun render(list: List<PlayList>) {
         if (list.isEmpty()) {
             with(binding) {
+                rvPlayList.visibility = View.GONE
                 placeholderImage.visibility = View.VISIBLE
                 placeholderText.visibility = View.VISIBLE
             }
@@ -80,5 +93,9 @@ class PlaylistFragment : Fragment() {
             adapter.list.addAll(list)
             adapter.notifyDataSetChanged()
         }
+    }
+
+    companion object {
+        const val PLAYLIST = "Playlist"
     }
 }

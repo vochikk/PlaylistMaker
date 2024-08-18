@@ -1,12 +1,14 @@
 package com.example.playlistmaker.ui.player.fragment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.core.os.bundleOf
+import androidx.core.view.doOnNextLayout
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
@@ -31,8 +33,6 @@ class PlayerFragment : Fragment() {
 
     private val viewModel by viewModel<PlayerViewModel>()
     private var newPlayerState: PlayerState? = null
-
-    private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
     private lateinit var adapter: AddPlayListAdapter
 
 
@@ -53,10 +53,14 @@ class PlayerFragment : Fragment() {
         adapter = AddPlayListAdapter(view.context)
         binding.rvPlayList.adapter = adapter
 
-        bottomSheetBehavior = BottomSheetBehavior.from(binding.bottomSheet).apply {
+        val bottomSheetBehavior: BottomSheetBehavior<LinearLayout> = BottomSheetBehavior.from(binding.bottomSheet).apply {
             state = BottomSheetBehavior.STATE_HIDDEN
         }
 
+        binding.root.doOnNextLayout {
+            bottomSheetBehavior.peekHeight = binding.playerFragment.height - binding.buttonAdd.bottom
+        }
+        
         viewModel.playerStateLiveData.observe(viewLifecycleOwner) { state ->
             render(state)
         }
@@ -99,24 +103,7 @@ class PlayerFragment : Fragment() {
 
                             adapter.setOnClickListener(object : AddPlayListAdapter.OnClickListener {
                                 override fun onClick(playList: PlayList) {
-                                    val isInclude =
-                                        (viewModel.updatePlayList(track, playList))
-                                    val str = if (isInclude) {
-                                        "${
-                                            view.resources
-                                                .getString(
-                                                    R.string.track_in_playlist
-                                                )
-                                        } ${playList.namePlaylist}"
-                                    } else {
-                                        "${
-                                            view.resources
-                                                .getString(
-                                                    R.string.track_add_in_playlist
-                                                )
-                                        } ${playList.namePlaylist}"
-                                    }
-                                    seeMessage(str)
+                                    viewModel.updatePlayList(track, playList, requireContext())
                                     viewModel.getPlayList()
                                 }
                             })
@@ -208,7 +195,22 @@ class PlayerFragment : Fragment() {
         }
     }
 
-    private fun seeMessage(str: String) {
+    private fun seeMessage(playList: PlayList, isInclude: Boolean) {
+        val str = if (isInclude) {
+            "${
+                view?.resources
+                    ?.getString(
+                        R.string.track_in_playlist
+                    )
+            } ${playList.namePlaylist}"
+        } else {
+            "${
+                view?.resources
+                    ?.getString(
+                        R.string.track_add_in_playlist
+                    )
+            } ${playList.namePlaylist}"
+        }
         val toast: Toast = Toast.makeText(requireContext(), str, Toast.LENGTH_SHORT)
         toast.show()
     }

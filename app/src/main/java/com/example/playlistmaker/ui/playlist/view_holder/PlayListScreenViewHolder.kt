@@ -1,21 +1,21 @@
-package com.example.playlistmaker.ui.search.view_holder
+package com.example.playlistmaker.ui.playlist.view_holder
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.domain.player.models.Track
 
-class TrackViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
+class PlayListScreenViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
     LayoutInflater.from(parent.context).inflate(
         R.layout.track, parent, false
     )
 ) {
-
     private val albumImage: ImageView = itemView.findViewById(R.id.albumImage)
     private val trackName: TextView = itemView.findViewById(R.id.trackName)
     private val artistName: TextView = itemView.findViewById(R.id.artistName)
@@ -32,7 +32,5 @@ class TrackViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
             .centerCrop()
             .transform(RoundedCorners(2))
             .into(albumImage)
-
     }
-
 }
