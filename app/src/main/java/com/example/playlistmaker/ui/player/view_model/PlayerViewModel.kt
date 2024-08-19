@@ -15,6 +15,7 @@ import com.example.playlistmaker.domain.player.OnStateChangeListener
 import com.example.playlistmaker.domain.player.PlayerInteractor
 import com.example.playlistmaker.domain.player.models.Track
 import com.example.playlistmaker.domain.player.state.PlayerState
+import com.example.playlistmaker.domain.search.TracksInteractor
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.Dispatchers
@@ -25,7 +26,8 @@ import kotlinx.coroutines.launch
 class PlayerViewModel(
     private val playerInteractor: PlayerInteractor,
     private val favoriteInteractor: FavoriteInteractor,
-    private val plylistInteractor: PlayListInteractor
+    private val plylistInteractor: PlayListInteractor,
+    private val trackInteractor: TracksInteractor
 ) : ViewModel() {
 
     private val _playerStateLiveDate = MutableLiveData<PlayerState>()
@@ -85,6 +87,13 @@ class PlayerViewModel(
             }
             _playerStateLiveDate.postValue(PlayerState.PREPARED())
             timerJob?.cancel()
+        }
+    }
+
+    fun updateFavoriteTag (track:Track) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val isFavorite = trackInteractor.updateFavoriteTag(track).isFavorite
+            _likeStateLiveData.postValue(isFavorite)
         }
     }
 

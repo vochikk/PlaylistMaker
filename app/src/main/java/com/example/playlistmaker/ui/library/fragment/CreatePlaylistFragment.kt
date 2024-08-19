@@ -17,6 +17,7 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.net.toUri
 import androidx.core.text.set
+import androidx.core.view.doOnNextLayout
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.playlistmaker.R
@@ -96,6 +97,9 @@ class CreatePlaylistFragment : Fragment() {
 
             override fun afterTextChanged(s: Editable?) {
                 binding.buttonCreate.isEnabled = (!s.isNullOrEmpty())
+                if (!s.isNullOrEmpty()) {
+
+                }
             }
         }
 

@@ -58,15 +58,17 @@ class PlayerFragment : Fragment() {
         }
 
         binding.root.doOnNextLayout {
-            bottomSheetBehavior.peekHeight = binding.playerFragment.height - binding.buttonAdd.bottom
+            bottomSheetBehavior.peekHeight = binding.playerFragment.height - binding.artistName.bottom
         }
         
         viewModel.playerStateLiveData.observe(viewLifecycleOwner) { state ->
             render(state)
         }
         viewModel.likeStateLiveData.observe(viewLifecycleOwner) { state ->
-            setLikeButton(track.isFavorite)
+            setLikeButton(state)
         }
+
+        viewModel.updateFavoriteTag(track)
 
         drawLayout(track)
         viewModel.prepare(track)

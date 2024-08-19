@@ -18,7 +18,7 @@ class FavoriteRepositoryImpl(
 
     override fun getFavoriteTacks(): Flow<List<TrackDto>> = flow {
 
-        val tracks = appDatabase.trackDao().getListTrack().sortedWith(compareBy { it.timestamp })
+        val tracks = appDatabase.trackDao().getListTrack().sortedBy { it.timestamp }
         emit(convertFromTrackEntity(tracks).reversed())
     }
 

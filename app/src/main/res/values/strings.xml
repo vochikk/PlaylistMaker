@@ -22,7 +22,7 @@
     <string name="failure_text">Проблемы со связью\n\nЗагрузка не удалась. Проверьте подключение к интернету</string>
     <string name="update">Обновить</string>
     <string name="history_search">Вы искали</string>
-    <string name="remove_history">очистить историю</string>
+    <string name="remove_history">Очистить историю</string>
 
     <string name="image_album">лого альбома</string>
     <string name="label_track_time">Длительность</string>
@@ -69,8 +69,9 @@
     <string name="playlist_empty">В плейлисте нет ни одного трека, которым можно поделиться</string>
     
     <string name="share_playlist">Поделиться</string>
-    <string name="edit_information">Редактировать инфомацию</string>
+    <string name="edit_information">Редактировать информацию</string>
     <string name="delete_playlist">Удалить плейлист</string>
+    <string name="dialog_delete_playlist">Хотите удалить плейлист "%s"?</string>
     
     <plurals name="plurals">
         <item quantity="zero">%d треков</item>

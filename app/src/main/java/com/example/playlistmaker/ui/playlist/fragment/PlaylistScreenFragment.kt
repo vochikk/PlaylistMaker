@@ -34,6 +34,7 @@ class PlaylistScreenFragment : Fragment() {
     private val viewModel: PlaylistScreenViewModel by viewModel()
     private val adapter: PlayListScreenAdapter = PlayListScreenAdapter()
 
+    private var name = ""
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -54,6 +55,7 @@ class PlaylistScreenFragment : Fragment() {
 
         viewModel.playlistLiveData.observe(viewLifecycleOwner) { playlist ->
             drawLayout(playlist)
+            name = playlist.namePlaylist
         }
 
         viewModel.getTrackList(playListToView)
@@ -112,8 +114,18 @@ class PlaylistScreenFragment : Fragment() {
                             }
 
                             binding.buttonDeleteInMore.setOnClickListener {
-                                viewModel.deletePlaylist(playListToView)
-                                findNavController().navigateUp()
+
+                                MaterialAlertDialogBuilder(requireActivity())
+                                    .setTitle(view.resources.getString(R.string.dialog_delete_playlist, name))
+                                    .setNegativeButton(R.string.dismiss) { dialog, which ->
+                                        bottomSheetInMore.state = BottomSheetBehavior.STATE_HIDDEN
+                                    }
+                                    .setPositiveButton(R.string.accept) { dialog, which ->
+                                        viewModel.deletePlaylist(playListToView)
+                                        findNavController().navigateUp()
+                                    }
+                                    .show()
+
                             }
 
                             binding.buttonEditInMore.setOnClickListener {

@@ -21,4 +21,5 @@
     <dimen name="corner_56">56dp</dimen>
     <dimen name="corner_8">8dp</dimen>
     <dimen name="width_2">2dp</dimen>
+    <dimen name="width_4">4dp</dimen>
 </resources>

@@ -33,7 +33,9 @@ class TrackDbConverter {
             track.country,
             track.trackTimeMillis,
             track.artworkUrl100,
-            track.previewUrl
+            track.previewUrl,
+            false,
+            track.timestamp
         )
     }
 
@@ -48,7 +50,8 @@ class TrackDbConverter {
             track.country,
             track.trackTimeMillis,
             track.artworkUrl100,
-            track.previewUrl
+            track.previewUrl,
+            track.timestamp
         )
     }
 }

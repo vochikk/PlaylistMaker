@@ -5,7 +5,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.domain.player.models.Track
 
 class TrackAdapter (): RecyclerView.Adapter<TrackViewHolder> () {
-    var tracks = ArrayList<Track>()
+    var tracks = mutableListOf<Track>()
     private var onClickListener: OnClickListener? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackViewHolder = TrackViewHolder(parent)

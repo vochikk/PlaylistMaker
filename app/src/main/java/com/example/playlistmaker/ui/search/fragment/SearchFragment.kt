@@ -4,12 +4,16 @@ import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.LinearLayout
 import androidx.core.os.bundleOf
+import androidx.core.view.doOnNextLayout
 import androidx.core.view.isVisible
+import androidx.core.view.marginTop
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -54,7 +58,6 @@ class SearchFragment : Fragment() {
             render(state)
         }
 
-        tracks = viewModel.getTracksList()
         setViewElement()
 
         showViewOnScreen(StatusVisability.HISTORY_VISIBLE)
@@ -79,6 +82,7 @@ class SearchFragment : Fragment() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                binding.inputEditText.isCursorVisible = true
                 viewModel.searchDebounce(
                     s?.toString() ?: ""
                 )
@@ -97,10 +101,10 @@ class SearchFragment : Fragment() {
         textWatcher?.let { binding.inputEditText.addTextChangedListener(it) }
 
 
-        adapter.tracks = tracks as ArrayList<Track>
         binding.rvSearch.adapter = adapter
         adapter.setOnClickListener(object : TrackAdapter.OnClickListener {
             override fun onClick(track: Track) {
+                track.timestamp = System.currentTimeMillis()
                 viewModel.updateFavoriteTag(track)
                 if (clickDebounce()) {
                     startPlayer(track)
@@ -108,10 +112,11 @@ class SearchFragment : Fragment() {
             }
         })
 
-        historyAdapter.tracks.addAll(viewModel.getTracksList())
+        historyAdapter.tracks = viewModel.getTracksList().toMutableList()
         binding.rvHistorySearch.adapter = historyAdapter
         historyAdapter.setOnClickListener(object : TrackAdapter.OnClickListener {
             override fun onClick(track: Track) {
+                track.timestamp = System.currentTimeMillis()
                 viewModel.updateFavoriteTag(track)
                 if (clickDebounce()) {
                     startPlayer(track)
@@ -153,7 +158,7 @@ class SearchFragment : Fragment() {
         val inputMethodManager =
             requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager?.hideSoftInputFromWindow(windowToken, 0)
-        showViewOnScreen(StatusVisability.HISTORY_VISIBLE)
+
     }
 
     private fun render(state: SearchState) {
@@ -168,7 +173,6 @@ class SearchFragment : Fragment() {
 
             is SearchState.HistoryView -> {
                 showViewOnScreen(StatusVisability.HISTORY_VISIBLE)
-                updateAdapterAfterClear(viewModel.getTracksList())
                 setViewElement()
             }
         }
@@ -180,6 +184,7 @@ class SearchFragment : Fragment() {
                 adapter.notifyDataSetChanged()
                 binding.rvSearch.visibility = View.GONE
                 binding.historySearch.visibility = View.GONE
+                binding.progressBarLayout.visibility = View.GONE
                 binding.progressBar.visibility = View.GONE
                 binding.placeholder.visibility = View.VISIBLE
                 binding.placeholderImage.setImageResource(R.drawable.ic_nothing_found)
@@ -192,6 +197,7 @@ class SearchFragment : Fragment() {
                 adapter.notifyDataSetChanged()
                 binding.rvSearch.visibility = View.GONE
                 binding.historySearch.visibility = View.GONE
+                binding.progressBarLayout.visibility = View.GONE
                 binding.progressBar.visibility = View.GONE
                 binding.placeholder.visibility = View.VISIBLE
                 binding.placeholderImage.setImageResource(R.drawable.ic_failure)
@@ -202,6 +208,7 @@ class SearchFragment : Fragment() {
             StatusVisability.SEARCH_VISIBLE -> {
                 binding.placeholder.visibility = View.GONE
                 binding.historySearch.visibility = View.GONE
+                binding.progressBarLayout.visibility = View.GONE
                 binding.progressBar.visibility = View.GONE
                 binding.rvSearch.visibility = View.VISIBLE
                 adapter.notifyDataSetChanged()
@@ -210,7 +217,10 @@ class SearchFragment : Fragment() {
             StatusVisability.HISTORY_VISIBLE -> {
                 binding.placeholder.visibility = View.GONE
                 binding.historySearch.visibility = View.VISIBLE
+                binding.progressBarLayout.visibility = View.GONE
+                binding.progressBar.visibility = View.GONE
                 binding.rvSearch.visibility = View.GONE
+                updateHistory()
                 adapter.notifyDataSetChanged()
             }
 
@@ -218,7 +228,9 @@ class SearchFragment : Fragment() {
                 binding.placeholder.visibility = View.GONE
                 binding.historySearch.visibility = View.GONE
                 binding.rvSearch.visibility = View.GONE
+                binding.progressBarLayout.visibility = View.VISIBLE
                 binding.progressBar.visibility = View.VISIBLE
+                view?.hideKeyboard()
                 adapter.notifyDataSetChanged()
             }
         }
@@ -246,14 +258,22 @@ class SearchFragment : Fragment() {
         adapter.tracks.clear()
         adapter.tracks.addAll(trackList)
         adapter.notifyDataSetChanged()
+        updateHistory()
+    }
+
+    fun updateHistory() {
         historyAdapter.tracks.clear()
-        historyAdapter.tracks.addAll(viewModel.getTracksList())
+        val list = viewModel.getTracksList().toMutableList()
+        historyAdapter.tracks = list
+        historyAdapter.tracks
         historyAdapter.notifyDataSetChanged()
     }
 
     private fun clearInputEditText(view: View) {
         binding.inputEditText.setText("")
+        binding.inputEditText.isCursorVisible = false
         view.hideKeyboard()
+        showViewOnScreen(StatusVisability.HISTORY_VISIBLE)
     }
 
     private fun startPlayer(track: Track) {
