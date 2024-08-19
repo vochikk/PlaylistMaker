@@ -74,6 +74,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/padding_32"
         android:padding="0dp"
+        app:cursorColor="@color/backround_blue"
         app:layout_constraintEnd_toStartOf="@id/rightGuidline"
         app:layout_constraintStart_toEndOf="@id/leftGuidline"
         app:layout_constraintTop_toBottomOf="@id/imagePlaylist">
@@ -100,6 +101,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/padding_16"
         android:padding="0dp"
+        app:cursorColor="@color/backround_blue"
         app:layout_constraintEnd_toStartOf="@id/rightGuidline"
         app:layout_constraintStart_toEndOf="@id/leftGuidline"
         app:layout_constraintTop_toBottomOf="@id/namePlaylistLayot">
