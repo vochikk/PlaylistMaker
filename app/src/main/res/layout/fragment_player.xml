@@ -49,6 +49,13 @@
         app:layout_constraintTop_toBottomOf="@id/buttonBack"
         app:layout_constraintBottom_toTopOf="@id/trackName"/>
 
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/horizontzlGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.33"/>
+
     <TextView
         android:id="@+id/trackName"
         android:layout_width="0dp"

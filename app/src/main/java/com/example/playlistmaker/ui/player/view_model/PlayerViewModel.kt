@@ -147,7 +147,6 @@ class PlayerViewModel(
                 val toast: Toast = Toast.makeText(context, str, Toast.LENGTH_SHORT)
                 toast.show()
             }
-
             favoriteInteractor.insertTrackInPlayList(playList, track)
             favoriteInteractor.getTrackList(playList).collect { list ->
                 playList.sizePlaylist = list.size

@@ -40,7 +40,8 @@ class PlayListRepositoryImpl(
                 tracksInPlaylist.add(converter.mapToTrack(it))
             }
         }
-        return tracksInPlaylist
+        tracksInPlaylist.sortBy { it.timestampToPlaylist }
+        return tracksInPlaylist.reversed()
     }
 
     override fun getPlaylist(id: Int): PlayList {

@@ -93,14 +93,14 @@ class TracksRepositoryImpl(
                 track.trackId,
                 track.trackName, track.artistName, track.collectionName, track.releaseDate,
                 track.primaryGenreName, track.country, track.trackTimeMillis, track.artworkUrl100,
-                track.previewUrl, true, track.timestamp
+                track.previewUrl, true, track.timestamp, track.timestampToPlaylist
             )
         }
         return Track(
             track.trackId,
             track.trackName, track.artistName, track.collectionName, track.releaseDate,
             track.primaryGenreName, track.country, track.trackTimeMillis, track.artworkUrl100,
-            track.previewUrl, false, track.timestamp
+            track.previewUrl, false, track.timestamp, track.timestampToPlaylist
         )
     }
 }

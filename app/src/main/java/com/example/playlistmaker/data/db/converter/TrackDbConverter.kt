@@ -18,7 +18,8 @@ class TrackDbConverter {
             track.trackTimeMillis,
             track.artworkUrl100,
             track.previewUrl,
-            System.currentTimeMillis()
+            track.timestamp,
+            track.timestampToPlaylist
         )
     }
 
@@ -35,7 +36,8 @@ class TrackDbConverter {
             track.artworkUrl100,
             track.previewUrl,
             false,
-            track.timestamp
+            track.timestamp,
+            track.timestampToPlaylist
         )
     }
 
@@ -51,7 +53,8 @@ class TrackDbConverter {
             track.trackTimeMillis,
             track.artworkUrl100,
             track.previewUrl,
-            track.timestamp
+            track.timestamp,
+            track.timestampToPlaylist
         )
     }
 }

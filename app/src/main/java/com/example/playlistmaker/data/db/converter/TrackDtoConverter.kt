@@ -19,7 +19,8 @@ class TrackDtoConverter {
                 it.artworkUrl100,
                 it.previewUrl,
                 it.isFavorite,
-                it.timestamp
+                it.timestamp,
+                it.timestampToPlaylist
             )
         }
     }
@@ -38,7 +39,8 @@ class TrackDtoConverter {
                 it.artworkUrl100,
                 it.previewUrl,
                 it.isFavorite,
-                it.timestamp
+                it.timestamp,
+                it.timestampToPlaylist
             )
         }
     }
@@ -56,7 +58,8 @@ class TrackDtoConverter {
             track.artworkUrl100,
             track.previewUrl,
             track.isFavorite,
-            track.timestamp
+            track.timestamp,
+            track.timestampToPlaylist
         )
     }
 }

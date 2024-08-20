@@ -141,6 +141,18 @@
                 android:src="@drawable/rectangle"
                 app:tint="?attr/colorOnPrimary" />
 
+            <TextView
+                android:id="@+id/emptyPlaylistMessage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:layout_marginTop="@dimen/padding_32"
+                android:text="@string/empty_playlist_message"
+                android:layout_gravity="center"
+                android:fontFamily="@font/ys_text_regular"
+                android:textSize="@dimen/text_16"
+                android:textColor="?attr/colorPrimaryVariant"/>
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvTrackList"
                 android:layout_width="match_parent"
@@ -156,6 +168,7 @@
             android:layout_height="match_parent"
             android:background="@drawable/background_bottom_sheet"
             android:orientation="vertical"
+            android:visibility="gone"
             app:behavior_hideable="true"
             app:behavior_peekHeight="300dp"
             app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">

@@ -1,6 +1,7 @@
 package com.example.playlistmaker.ui.playlist.fragment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -61,10 +62,19 @@ class PlaylistScreenFragment : Fragment() {
         viewModel.getTrackList(playListToView)
 
         viewModel.tracklistLiveData.observe(viewLifecycleOwner) { list ->
-            adapter.tracks.clear()
-            adapter.tracks.addAll(list)
-            adapter.notifyDataSetChanged()
-
+            if (list.isEmpty()) {
+                binding.emptyPlaylistMessage.visibility = View.VISIBLE
+                binding.rvTrackList.visibility = View.GONE
+            } else {
+                binding.emptyPlaylistMessage.visibility = View.GONE
+                binding.rvTrackList.visibility = View.VISIBLE
+                adapter.tracks.clear()
+                adapter.tracks = list.toMutableList()
+                list.forEach {
+                    Log.d("sortInView", "${it.timestampToPlaylist}")
+                }
+                adapter.notifyDataSetChanged()
+            }
             viewTotalTime(list)
         }
 
@@ -116,7 +126,12 @@ class PlaylistScreenFragment : Fragment() {
                             binding.buttonDeleteInMore.setOnClickListener {
 
                                 MaterialAlertDialogBuilder(requireActivity())
-                                    .setTitle(view.resources.getString(R.string.dialog_delete_playlist, name))
+                                    .setTitle(
+                                        view.resources.getString(
+                                            R.string.dialog_delete_playlist,
+                                            name
+                                        )
+                                    )
                                     .setNegativeButton(R.string.dismiss) { dialog, which ->
                                         bottomSheetInMore.state = BottomSheetBehavior.STATE_HIDDEN
                                     }

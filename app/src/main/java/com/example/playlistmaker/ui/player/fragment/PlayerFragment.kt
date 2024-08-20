@@ -53,14 +53,16 @@ class PlayerFragment : Fragment() {
         adapter = AddPlayListAdapter(view.context)
         binding.rvPlayList.adapter = adapter
 
-        val bottomSheetBehavior: BottomSheetBehavior<LinearLayout> = BottomSheetBehavior.from(binding.bottomSheet).apply {
-            state = BottomSheetBehavior.STATE_HIDDEN
-        }
+        val bottomSheetBehavior: BottomSheetBehavior<LinearLayout> =
+            BottomSheetBehavior.from(binding.bottomSheet).apply {
+                state = BottomSheetBehavior.STATE_HIDDEN
+            }
 
         binding.root.doOnNextLayout {
-            bottomSheetBehavior.peekHeight = binding.playerFragment.height - binding.artistName.bottom
+            bottomSheetBehavior.peekHeight =
+                binding.playerFragment.height - binding.horizontzlGuideline.bottom
         }
-        
+
         viewModel.playerStateLiveData.observe(viewLifecycleOwner) { state ->
             render(state)
         }
@@ -105,6 +107,7 @@ class PlayerFragment : Fragment() {
 
                             adapter.setOnClickListener(object : AddPlayListAdapter.OnClickListener {
                                 override fun onClick(playList: PlayList) {
+                                    track.timestampToPlaylist = System.currentTimeMillis()
                                     viewModel.updatePlayList(track, playList, requireContext())
                                     viewModel.getPlayList()
                                 }

@@ -41,7 +41,8 @@ class PlayListDbConverter {
             trackListEntity.artworkUrl100,
             trackListEntity.previewUrl,
             false,
-            trackListEntity.timestamp
+            trackListEntity.timestamp,
+            trackListEntity.timestampToPlaylist
         )
     }
 }

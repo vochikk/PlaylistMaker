@@ -5,7 +5,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.domain.player.models.Track
 
 class PlayListScreenAdapter (): RecyclerView.Adapter<PlayListScreenViewHolder> () {
-    var tracks = ArrayList<Track>()
+    var tracks : MutableList<Track> = mutableListOf()
     private var onClickListener: OnClickListener? = null
     private var onLongClickListener: OnLongClickListener? = null
 

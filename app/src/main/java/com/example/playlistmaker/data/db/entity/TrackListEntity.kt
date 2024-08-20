@@ -17,5 +17,6 @@ class TrackListEntity(
     val trackTimeMillis: Long,
     val artworkUrl100: String,
     val previewUrl: String,
-    var timestamp: Long
+    var timestamp: Long,
+    var timestampToPlaylist: Long
 )
