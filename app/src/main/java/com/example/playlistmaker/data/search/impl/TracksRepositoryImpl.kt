@@ -45,7 +45,7 @@ class TracksRepositoryImpl(
     }
 
     override fun getTracksList(): List<Track> {
-        return converter.mapToTrack(storageClient.get())
+        return converter.mapToTrack(storageClient.get()).sortedBy { it.timestamp }.reversed()
     }
 
     override fun saveTracksList(trackList: List<Track>) {
@@ -70,12 +70,12 @@ class TracksRepositoryImpl(
                 } else {
                     list.removeAt(9)
                 }
-                list.add(0, track)
+                list.add(track)
             }
 
             list.size < MAX_COUNT -> {
                 list.remove(track)
-                list.add(0, track)
+                list.add(track)
             }
         }
 
@@ -93,14 +93,14 @@ class TracksRepositoryImpl(
                 track.trackId,
                 track.trackName, track.artistName, track.collectionName, track.releaseDate,
                 track.primaryGenreName, track.country, track.trackTimeMillis, track.artworkUrl100,
-                track.previewUrl, true
+                track.previewUrl, true, track.timestamp, track.timestampToPlaylist
             )
         }
         return Track(
             track.trackId,
             track.trackName, track.artistName, track.collectionName, track.releaseDate,
             track.primaryGenreName, track.country, track.trackTimeMillis, track.artworkUrl100,
-            track.previewUrl, false
+            track.previewUrl, false, track.timestamp, track.timestampToPlaylist
         )
     }
 }

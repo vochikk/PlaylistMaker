@@ -1,10 +1,13 @@
 package com.example.playlistmaker.ui.player.view_model
 
+import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.playlistmaker.R
 import com.example.playlistmaker.domain.player.FavoriteInteractor
 import com.example.playlistmaker.domain.library.PlayListInteractor
 import com.example.playlistmaker.domain.library.model.PlayList
@@ -12,6 +15,7 @@ import com.example.playlistmaker.domain.player.OnStateChangeListener
 import com.example.playlistmaker.domain.player.PlayerInteractor
 import com.example.playlistmaker.domain.player.models.Track
 import com.example.playlistmaker.domain.player.state.PlayerState
+import com.example.playlistmaker.domain.search.TracksInteractor
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.Dispatchers
@@ -22,7 +26,8 @@ import kotlinx.coroutines.launch
 class PlayerViewModel(
     private val playerInteractor: PlayerInteractor,
     private val favoriteInteractor: FavoriteInteractor,
-    private val plylistInteractor: PlayListInteractor
+    private val plylistInteractor: PlayListInteractor,
+    private val trackInteractor: TracksInteractor
 ) : ViewModel() {
 
     private val _playerStateLiveDate = MutableLiveData<PlayerState>()
@@ -85,6 +90,13 @@ class PlayerViewModel(
         }
     }
 
+    fun updateFavoriteTag (track:Track) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val isFavorite = trackInteractor.updateFavoriteTag(track).isFavorite
+            _likeStateLiveData.postValue(isFavorite)
+        }
+    }
+
     fun updateFavorite(track: Track) {
         viewModelScope.launch(Dispatchers.IO) {
             if (track.isFavorite) {
@@ -106,39 +118,44 @@ class PlayerViewModel(
         }
     }
 
-    fun updatePlayList(track: Track, playList: PlayList): Boolean {
-        var str: String = ""
-        var isInclude = false
-        var trackList: MutableList<Int> = mutableListOf()
-
-        if (playList.sizePlaylist != 0) {
-            trackList.addAll(
-                Gson().fromJson(
-                    playList.tracksList,
-                    object : TypeToken<ArrayList<Int>>() {}.type
-                )
-            )
-
-            trackList.forEach {
-                isInclude = (track.trackId == it)
-            }
-        }
-
-        if (!isInclude) {
-            trackList.add(track.trackId)
-            Log.d("log", trackList.toString())
-        }
-
-        str = Gson().toJson(trackList)
-
-        playList.tracksList = str
-        playList.sizePlaylist = trackList.size
+    fun updatePlayList(track: Track, playList: PlayList, context: Context) {
+        var isInclude: Boolean = false
 
         viewModelScope.launch(Dispatchers.IO) {
-            favoriteInteractor.insertTrackInPlayList(track)
+            favoriteInteractor.getTrackList(playList).collect { list ->
+                if (list.contains(track.trackId)) {
+                    isInclude = true
+                }
+            }
+
+            viewModelScope.launch(Dispatchers.Main) {
+                val str = if (isInclude) {
+                    "${
+                        context.resources
+                            .getString(
+                                R.string.track_in_playlist
+                            )
+                    } ${playList.namePlaylist}"
+                } else {
+                    "${
+                        context.resources
+                            ?.getString(
+                                R.string.track_add_in_playlist
+                            )
+                    } ${playList.namePlaylist}"
+                }
+                val toast: Toast = Toast.makeText(context, str, Toast.LENGTH_SHORT)
+                toast.show()
+            }
+            favoriteInteractor.insertTrackInPlayList(playList, track)
+            favoriteInteractor.getTrackList(playList).collect { list ->
+                playList.sizePlaylist = list.size
+            }
             plylistInteractor.updateTracksList(playList)
+            getPlayList()
+
+
         }
-        return isInclude
     }
 
     companion object {

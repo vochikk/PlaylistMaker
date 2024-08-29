@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout
+    android:id="@+id/playerFragment"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -47,6 +48,13 @@
         app:layout_constraintEnd_toStartOf="@id/rightGuidline"
         app:layout_constraintTop_toBottomOf="@id/buttonBack"
         app:layout_constraintBottom_toTopOf="@id/trackName"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/horizontzlGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.33"/>
 
     <TextView
         android:id="@+id/trackName"

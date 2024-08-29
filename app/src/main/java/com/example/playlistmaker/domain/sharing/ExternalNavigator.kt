@@ -6,5 +6,5 @@ interface ExternalNavigator {
     fun shareLink()
     fun openEmail()
     fun openLink()
-
+    fun shareTrack(str: String)
 }

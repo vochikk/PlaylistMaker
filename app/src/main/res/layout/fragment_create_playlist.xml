@@ -51,7 +51,7 @@
         android:id="@+id/imagePlaylist"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="64dp"
+        android:layout_marginTop="32dp"
         android:background="@drawable/rectangle_background"
         android:clickable="true"
         android:scaleType="centerCrop"
@@ -69,11 +69,12 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/namePlaylistLayot"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        style="@style/InputTextLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/padding_32"
         android:padding="0dp"
+        app:cursorColor="@color/backround_blue"
         app:layout_constraintEnd_toStartOf="@id/rightGuidline"
         app:layout_constraintStart_toEndOf="@id/leftGuidline"
         app:layout_constraintTop_toBottomOf="@id/imagePlaylist">
@@ -95,11 +96,12 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textAboutLayout"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        style="@style/InputTextLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/padding_16"
         android:padding="0dp"
+        app:cursorColor="@color/backround_blue"
         app:layout_constraintEnd_toStartOf="@id/rightGuidline"
         app:layout_constraintStart_toEndOf="@id/leftGuidline"
         app:layout_constraintTop_toBottomOf="@id/namePlaylistLayot">

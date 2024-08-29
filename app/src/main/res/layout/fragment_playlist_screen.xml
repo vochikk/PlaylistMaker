@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/playlistScreenView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_grey"
+    tools:context=".ui.playlist.fragment.PlaylistScreenFragment">
+
+    <ImageView
+        android:id="@+id/imagePlaylist"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_placeholder_312x312"
+        app:layout_constraintBottom_toTopOf="@id/centerLine"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/buttonBack"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/padding_8"
+        android:layout_marginTop="@dimen/padding_16"
+        android:src="@drawable/back"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/black" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/centerLine"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/width_2"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.50" />
+
+    <TextView
+        android:id="@+id/namePlaylist"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/ys_display_bold"
+        android:paddingStart="@dimen/padding_8"
+        android:paddingTop="@dimen/padding_8"
+        android:text="@string/name"
+        android:textColor="@color/black"
+        android:textSize="@dimen/text_24"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/centerLine" />
+
+    <TextView
+        android:id="@+id/textAbout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/ys_display_regular"
+        android:padding="@dimen/padding_8"
+        android:text="@string/about"
+        android:textColor="@color/black"
+        android:textSize="@dimen/text_18"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/namePlaylist" />
+
+    <TextView
+        android:id="@+id/totalTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/ys_display_regular"
+        android:paddingStart="@dimen/padding_8"
+        android:text="@string/total_time"
+        android:textColor="@color/black"
+        android:textSize="@dimen/text_18"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textAbout" />
+
+    <ImageView
+        android:id="@+id/barrierDot"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic"
+        app:layout_constraintBottom_toBottomOf="@id/totalTime"
+        app:layout_constraintStart_toEndOf="@id/totalTime"
+        app:layout_constraintTop_toTopOf="@id/totalTime"
+        app:tint="@color/black" />
+
+    <TextView
+        android:id="@+id/sizePlaylist"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/ys_display_regular"
+        android:textColor="@color/black"
+        android:textSize="@dimen/text_18"
+        app:layout_constraintStart_toEndOf="@id/barrierDot"
+        app:layout_constraintTop_toBottomOf="@id/textAbout" />
+
+    <ImageView
+        android:id="@+id/buttonShare"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/padding_8"
+        android:src="@drawable/share"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/totalTime"
+        app:tint="@color/black" />
+
+    <ImageView
+        android:id="@+id/buttomMore"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/padding_8"
+        android:src="@drawable/ic_more"
+        app:layout_constraintBottom_toBottomOf="@id/buttonShare"
+        app:layout_constraintStart_toEndOf="@id/buttonShare"
+        app:layout_constraintTop_toTopOf="@id/buttonShare"
+        app:tint="@color/black" />
+
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:layout_editor_absoluteX="-25dp"
+        tools:layout_editor_absoluteY="-16dp">
+
+        <LinearLayout
+            android:id="@+id/bottomSheetListTrack"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/background_bottom_sheet"
+            android:orientation="vertical"
+            app:behavior_hideable="false"
+            app:behavior_peekHeight="300dp"
+            app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:padding="@dimen/padding_8"
+                android:src="@drawable/rectangle"
+                app:tint="?attr/colorOnPrimary" />
+
+            <TextView
+                android:id="@+id/emptyPlaylistMessage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:layout_marginTop="@dimen/padding_32"
+                android:text="@string/empty_playlist_message"
+                android:layout_gravity="center"
+                android:fontFamily="@font/ys_text_regular"
+                android:textSize="@dimen/text_16"
+                android:textColor="?attr/colorPrimaryVariant"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvTrackList"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="@dimen/padding_16"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/bottomSheetMore"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/background_bottom_sheet"
+            android:orientation="vertical"
+            app:behavior_hideable="true"
+            app:behavior_peekHeight="300dp"
+            app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:padding="@dimen/padding_8"
+                android:src="@drawable/rectangle"
+                app:tint="?attr/colorOnPrimary" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="@dimen/padding_16">
+
+                <ImageView
+                    android:id="@+id/imagePlaylistInMore"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:contentDescription="@string/album_logo"
+                    android:src="@drawable/ic_placeholder" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/namePlaylistInMore"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/ys_display_regular"
+                        android:lines="1"
+                        android:paddingStart="@dimen/padding_8"
+                        android:paddingTop="@dimen/padding_8"
+                        android:text="@string/name"
+                        android:textColor="?attr/colorPrimaryVariant"
+                        android:textFontWeight="400"
+                        android:textSize="@dimen/text_16" />
+
+                    <TextView
+                        android:id="@+id/sizePlaylistInMore"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingStart="@dimen/padding_8"
+                        android:fontFamily="@font/ys_display_regular"
+                        android:text="@string/track_author"
+                        android:textColor="?attr/colorOnPrimary"
+                        android:textFontWeight="400"
+                        android:textSize="@dimen/text_11" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/buttomShareInMore"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/share_playlist"
+                android:padding="@dimen/padding_16"
+                android:fontFamily="@font/ys_text_regular"
+                android:textSize="@dimen/text_16"
+                android:textColor="?attr/colorPrimaryVariant"/>
+
+            <TextView
+                android:id="@+id/buttonEditInMore"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/edit_information"
+                android:padding="@dimen/padding_16"
+                android:fontFamily="@font/ys_text_regular"
+                android:textSize="@dimen/text_16"
+                android:textColor="?attr/colorPrimaryVariant"/>
+
+            <TextView
+                android:id="@+id/buttonDeleteInMore"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/delete_playlist"
+                android:padding="@dimen/padding_16"
+                android:fontFamily="@font/ys_text_regular"
+                android:textSize="@dimen/text_16"
+                android:textColor="?attr/colorPrimaryVariant"/>
+
+
+        </LinearLayout>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

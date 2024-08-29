@@ -1,10 +1,13 @@
 package com.example.playlistmaker.data.db.impl
 
 import com.example.playlistmaker.data.db.AppDatabase
+import com.example.playlistmaker.data.db.converter.PlayListDbConverter
 import com.example.playlistmaker.domain.player.FavoriteRepository
 import com.example.playlistmaker.data.db.converter.TrackDbConverter
 import com.example.playlistmaker.data.db.entity.TrackEntity
+import com.example.playlistmaker.data.db.entity.TracksToPlaylistEntity
 import com.example.playlistmaker.data.search.dto.TrackDto
+import com.example.playlistmaker.domain.library.model.PlayList
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
@@ -15,7 +18,7 @@ class FavoriteRepositoryImpl(
 
     override fun getFavoriteTacks(): Flow<List<TrackDto>> = flow {
 
-        val tracks = appDatabase.trackDao().getListTrack().sortedWith(compareBy { it.timestamp })
+        val tracks = appDatabase.trackDao().getListTrack().sortedBy { it.timestamp }
         emit(convertFromTrackEntity(tracks).reversed())
     }
 
@@ -29,8 +32,14 @@ class FavoriteRepositoryImpl(
         appDatabase.trackDao().deleteTrack(trackDbConverter.map(trackDto))
     }
 
-    override fun insertTrackInPlayList(trackDto: TrackDto) {
+    override fun insertTrackInPlayList(playList: PlayList, trackDto: TrackDto) {
         appDatabase.trackListDao().insertTrack(trackDbConverter.mapToTrackList(trackDto))
+        appDatabase.tracksToPlaylistDao()
+            .insert(TracksToPlaylistEntity(playList.idPlaylist, trackDto.trackId))
+    }
+
+    override fun getTrackList(playList: PlayList): Flow<List<Int>> = flow{
+        emit(appDatabase.tracksToPlaylistDao().getTrackList(playList.idPlaylist))
     }
 
     private fun convertFromTrackEntity(tracks: List<TrackEntity>): List<TrackDto> {

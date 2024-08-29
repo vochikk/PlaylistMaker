@@ -1,6 +1,7 @@
 package com.example.playlistmaker.domain.player
 
 import com.example.playlistmaker.data.search.dto.TrackDto
+import com.example.playlistmaker.domain.library.model.PlayList
 import kotlinx.coroutines.flow.Flow
 
 interface FavoriteRepository {
@@ -11,5 +12,7 @@ interface FavoriteRepository {
 
     fun deleteTrack(trackDto: TrackDto)
 
-    fun insertTrackInPlayList (trackDto: TrackDto)
+    fun insertTrackInPlayList (playList: PlayList, trackDto: TrackDto)
+
+    fun getTrackList(playList: PlayList) : Flow<List<Int>>
 }

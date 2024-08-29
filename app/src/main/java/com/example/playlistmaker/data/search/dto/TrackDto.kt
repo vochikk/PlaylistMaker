@@ -12,5 +12,7 @@ class TrackDto (
     val trackTimeMillis: Long,
     val artworkUrl100: String,
     val previewUrl: String,
-    var isFavorite: Boolean = false
+    var isFavorite: Boolean = false,
+    var timestamp: Long,
+    var timestampToPlaylist: Long
 )

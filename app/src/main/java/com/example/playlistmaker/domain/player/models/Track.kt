@@ -14,7 +14,9 @@ class Track (
     val trackTimeMillis: Long,
     val artworkUrl100: String,
     val previewUrl: String,
-    var isFavorite: Boolean
+    var isFavorite: Boolean,
+    var timestamp: Long,
+    var timestampToPlaylist: Long
     ) {
 
     fun getCoverArtwork() = artworkUrl100.replaceAfterLast('/',"512x512bb.jpg")

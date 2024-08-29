@@ -42,4 +42,12 @@ class ExternalNavigatorImpl(private val context: Context): ExternalNavigator {
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         context.startActivity(intent)
     }
+
+    override fun shareTrack(str: String) {
+        intent.action = Intent.ACTION_SEND
+        intent.putExtra(Intent.EXTRA_TEXT, str)
+        intent.type = "text/plain"
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        context.startActivity(intent)
+    }
 }

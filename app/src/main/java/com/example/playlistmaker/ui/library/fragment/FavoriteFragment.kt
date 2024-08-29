@@ -59,6 +59,7 @@ class FavoriteFragment: Fragment() {
     override fun onResume() {
         super.onResume()
         favoriteViewModel.updateList()
+        adapter.notifyDataSetChanged()
         isClickAllowed = true
     }
 
